@@ -21,6 +21,3 @@ SOURCES += \
 
 FORMS += \
     aiwidget.ui
-
-RESOURCES += \
-    res.qrc
