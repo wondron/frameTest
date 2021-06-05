@@ -8,6 +8,8 @@ DESTDIR         = ../plugins
 INCLUDEPATH += $$PWD/../FrameWork
 LIBS += $$PWD/../plugins/FrameWork.lib
 
+include(../dependence/halcon/halcon.pri)
+
 HEADERS += \
     WAiConstant.h \
     aidatapro.h \

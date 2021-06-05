@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "imagegroupbase.h"
-#include "commonUsage/imageviewerhalcon.h"
+#include "halconGraphic/halconwidget.h"
 
 namespace Ui {
 class ImageDetectBase;
@@ -20,7 +20,7 @@ public:
 
     void setPam(CSHDetect::imageGroupBase *pam);
 
-    Graphics::ImageViewerHalcon* getHalconWgt();
+    Graphics::halconWidget* getHalconWgt();
 
 private slots:
     void on_btn_getImage_clicked();

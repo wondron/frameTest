@@ -1,5 +1,5 @@
-#include "cgetcustrappos.h"
-#include "XmlRead.h"
+﻿#include "cgetcustrappos.h"
+#include "utils/XmlRead.h"
 #include "../commonUsage/commonDef.h"
 #include "QDebug"
 

@@ -85,6 +85,11 @@ public slots:
     void fpsChange(int num);
     void setWidgetName(QString);
 
+    /**
+     * @brief setImagePath: 通过指定路径来设置图像
+     */
+    void setImagePath(const QString &filePath);
+
 private:
     void iniPanel();
     void initPanelStyle();

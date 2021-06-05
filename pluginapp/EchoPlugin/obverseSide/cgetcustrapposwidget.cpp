@@ -1,6 +1,6 @@
 #include "cgetcustrapposwidget.h"
 #include "ui_cgetcustrapposwidget.h"
-#include "commonUsage/imageviewerhalcon.h"
+#include "halconGraphic/halconwidget.h"
 #include "commonUsage/algorithm.h"
 #include "qmessagebox.h"
 
@@ -18,14 +18,14 @@ class CGetCuStrapPosWidgetPrivate
 {
 public:
     CGetCuStrapPosWidgetPrivate(){
-        m_widget = new Graphics::ImageViewerHalcon();
+        m_widget = new Graphics::halconWidget();
         m_pam = new CGetCuStrapPos();
     }
 
     int m_width;
     int m_height;
 
-    Graphics::ImageViewerHalcon* m_widget;
+    Graphics::halconWidget* m_widget;
     HObject m_img;
     CGetCuStrapPos* m_pam;
 };

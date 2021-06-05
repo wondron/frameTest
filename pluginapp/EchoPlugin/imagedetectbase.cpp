@@ -21,11 +21,11 @@ public:
     ImageDetectBasePrivate(){
         m_widget = new CItemListWidget();
         m_pam = new imageGroupBase();
-        m_widgetHalcon = new Graphics::ImageViewerHalcon();
+        m_widgetHalcon = new Graphics::halconWidget();
     }
 
     CItemListWidget* m_widget;
-    Graphics::ImageViewerHalcon* m_widgetHalcon;
+    Graphics::halconWidget* m_widgetHalcon;
     imageGroupBase* m_pam;
 
     HObject m_img;
@@ -54,7 +54,7 @@ void ImageDetectBase::setPam(CSHDetect::imageGroupBase *pam)
     d->m_pam = pam;
 }
 
-Graphics::ImageViewerHalcon *ImageDetectBase::getHalconWgt()
+Graphics::halconWidget *ImageDetectBase::getHalconWgt()
 {
     return d->m_widgetHalcon;
 }

@@ -8,6 +8,7 @@
 #if QT_CONFIG(printdialog)
 #include <QPrinter>
 #include <QPrintDialog>
+#include "qstring.h"
 #endif
 #endif
 #ifndef QT_NO_OPENGL
@@ -177,6 +178,16 @@ void WGraphicsWidget::setWidgetName(QString name)
     d->m_name = name;
 }
 
+void WGraphicsWidget::setImagePath(const QString &filePath)
+{
+
+    qDebug() << "setImage:" << filePath;
+    QImage img(filePath);
+
+    if(img.isNull()) return;
+    setImage(img);
+}
+
 void WGraphicsWidget::enterEvent(QEvent *e)
 {
     Q_UNUSED(e);
@@ -278,6 +289,7 @@ void WGraphicsWidget::iniPanel()
         //qDebug() << "image file:" << filepath + d->m_btnsObjName[i] + ".png";
 
         QString str = filepath + d->m_btnsObjName[i] + ".png";
+        qDebug() << "icon path:" << str;
 
         btn->setIcon(QIcon(QPixmap(str)));
         btn->setToolTip(d->m_tipName[i]);

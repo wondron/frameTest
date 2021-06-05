@@ -1,5 +1,8 @@
 ﻿#include "aiplugin.h"
 #include "aiwidget.h"
+#include "graphics/wgraphicswidget.h"
+#include "cgetimagewidget.h"
+#include "commonWidget/cimageviewhalcon.h"
 
 AiPlugin::AiPlugin(QObject *parent) :
     QObject(parent)
@@ -9,9 +12,10 @@ AiPlugin::AiPlugin(QObject *parent) :
 
 void AiPlugin::echo(QObject *parent)
 {
+    Q_UNUSED(parent);
     qDebug()<<"enter AiPlugin";
 
-    AiWidget* widgt = new AiWidget();
+    CGetImageWidget* widgt = new CGetImageWidget();
     widgt->show();
 }
 

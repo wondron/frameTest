@@ -1,6 +1,6 @@
 #include "cgetregionswidget.h"
 #include "ui_cgetregionswidget.h"
-#include "commonUsage/imageviewerhalcon.h"
+#include "halconGraphic/halconwidget.h"
 #include "qfiledialog.h"
 #include "obverseSide/cgetregions.h"
 #include "qdebug.h"
@@ -25,7 +25,7 @@ public:
         pam = new CSHDetect::CGetRegions();
 
         for(int i = 0; i < DETECTSIZE; i++){
-            ImageViewerHalcon* widget = new ImageViewerHalcon();
+            halconWidget* widget = new halconWidget();
             widgetList.push_back(widget);
         }
     }
@@ -38,7 +38,7 @@ public:
 
     QList<QRadioButton *> radioBtnList;
     QList<QLayout*> layoutList;
-    QList<ImageViewerHalcon*> widgetList;
+    QList<halconWidget*> widgetList;
     QHash<int, HObject> channelImgs;
     QList<QGroupBox *> pamGroupList;
 

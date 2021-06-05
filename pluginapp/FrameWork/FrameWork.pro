@@ -9,8 +9,6 @@ CONFIG += c++11
 
 DESTDIR = ../plugins
 
-include(../dependence/halcon/halcon.pri)
-
 qtHaveModule(printsupport): QT += printsupport
 qtHaveModule(opengl): QT += opengl
 
@@ -22,6 +20,7 @@ qtHaveModule(opengl): QT += opengl
 include(graphics/graphics.pri)
 include(halconGraphic/halconGraphic.pri)
 include(commonWidget/commonWidget.pri)
+include(utils/utils.pri)
 
 # Default rules for deployment.
 unix {
@@ -29,9 +28,8 @@ unix {
 }
 !isEmpty(target.path): INSTALLS += target
 
-HEADERS += \
-    cexecute.h \
-    cfunction.h
+HEADERS +=
 
-SOURCES += \
-    cexecute.cpp
+SOURCES +=
+
+DISTFILES +=

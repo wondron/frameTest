@@ -2,13 +2,10 @@ HEADERS += \
     $$PWD/algorithm.h \
     $$PWD/cerror.h \
     $$PWD/comStruct.h \
-    $$PWD/commonDef.h \
-    $$PWD/imageviewerhalcon.h
+    $$PWD/commonDef.h
 
 SOURCES += \
     $$PWD/algorithm.cpp \
-    $$PWD/cerror.cpp \
-    $$PWD/imageviewerhalcon.cpp
+    $$PWD/cerror.cpp
 
-FORMS += \
-    $$PWD/imageviewerhalcon.ui
+FORMS +=

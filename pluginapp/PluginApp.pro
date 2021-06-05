@@ -5,3 +5,4 @@ SUBDIRS += \
     FrameWork \
     EchoPlugin \
     MainWindow
+

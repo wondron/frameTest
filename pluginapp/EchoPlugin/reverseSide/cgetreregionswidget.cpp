@@ -1,6 +1,6 @@
 #include "cgetreregionswidget.h"
 #include "ui_cgetreregionswidget.h"
-#include "commonUsage/imageviewerhalcon.h"
+#include "halconGraphic/halconwidget.h"
 #include "qfiledialog.h"
 #include "obverseSide/cgetregions.h"
 #include "qdebug.h"
@@ -26,7 +26,7 @@ public:
         pam = new CGetReRegions();
 
         for (int i = 0; i < DETECTSIZE; i++) {
-            ImageViewerHalcon* widget = new ImageViewerHalcon();
+            halconWidget* widget = new halconWidget();
             widgetList.push_back(widget);
         }
     }
@@ -43,7 +43,7 @@ public:
     CGetReRegions* pam;
     ReverRegionS regions;
 
-    QList<ImageViewerHalcon*> widgetList;
+    QList<halconWidget*> widgetList;
     QList<QGroupBox*> pamGroupList;
 };
 

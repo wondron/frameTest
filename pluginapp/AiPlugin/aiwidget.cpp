@@ -5,13 +5,14 @@
 #include "qfiledialog.h"
 #include "QMessageBox"
 #include "aidatapro.h"
-#include "cexecute.h"
+#include "utils/cexecute.h"
 #include "QProgressDialog"
 #include "QColorDialog"
 #include "qscrollbar.h"
 #include <QMessageBox>
 #include "WAiConstant.h"
 #include "qpainter.h"
+#include "qstring.h"
 
 #include <QtCharts/QChartView>
 #include <QtCharts/QSplineSeries>

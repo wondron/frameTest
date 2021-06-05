@@ -1,6 +1,6 @@
 #include "cgetcirclelenwidget.h"
 #include "ui_cgetcirclelenwidget.h"
-#include "commonUsage/imageviewerhalcon.h"
+#include "halconGraphic/halconwidget.h"
 #include "qmessagebox.h"
 #include "commonUsage/algorithm.h"
 #include "commonUsage/commonDef.h"
@@ -16,12 +16,12 @@ class CGetCircleLenWidgetPrivate
 {
 public:
     CGetCircleLenWidgetPrivate(){
-        m_widget = new Graphics::ImageViewerHalcon();
+        m_widget = new Graphics::halconWidget();
         m_pam = new CGetCircleLen();
 
         m_center = QPointF(0, 0);
     }
-    Graphics::ImageViewerHalcon *m_widget;
+    Graphics::halconWidget *m_widget;
     RegionS m_region;
     CGetCircleLen* m_pam;
     QPointF m_center;

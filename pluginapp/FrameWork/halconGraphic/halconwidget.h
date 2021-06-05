@@ -27,12 +27,23 @@ public:
     bool setShowImage(HalconCpp::HObject obj);
 
     /**
+     * @brief getShowImage: 获取图像
+     */
+    HalconCpp::HObject getShowImage();
+
+    /**
+     * @brief frashWindow :刷新窗口，方式某些obj没有显示。
+     */
+    void frashWindow();
+
+    /**
      * @brief showObj :显示图像
      * @param img：图像
      * @param obj：region区域
      */
     void showObj(HalconCpp::HObject img, HalconCpp::HObject obj);
 
+    void showObj(HalconCpp::HObject obj);
     /**
      * @brief objIsEmpty: 判定obj是否可用
      * @param obj：所要检测的对象
@@ -53,6 +64,36 @@ public:
      */
     void setDrawMode(const int Mode);
 
+    /**
+     * @brief setFont : 设置字体
+     * @param fontType: 类型
+     * @param size： 大小
+     * @param bold： 是否加粗
+     * @param slant：倾斜
+     */
+    void setFont(QString fontType = "Times New Roman", int size = 30, bool bold = false, bool slant = false);
+
+    /**
+     * @brief showString :显示文字信息
+     * @param str
+     * @param pts
+     */
+    void showMsg(const QString str, const QPoint pts = QPoint(0, 0));
+
+    void showMsg(QList<QString> strList, const QPoint pts = QPoint(0, 0));
+
+    /**
+     * @brief getWindowHandle :获取句柄
+     */
+    HalconCpp::HTuple getWindowHandle();
+
+public slots:
+
+    /**
+     * @brief setImageFile:通过设定图像来显示图像
+     */
+    void setImageFile(const QString& filepath);
+
 protected:
     //滚轮事件
     void wheelEvent(QWheelEvent *ev);
@@ -71,6 +112,10 @@ protected:
 
 signals:
     void pointClicked(int x, int y);
+
+private slots:
+    void on_radio_margin_clicked();
+    void on_radio_fill_clicked();
 
 private:
     Ui::halconWidget *ui;

@@ -59,11 +59,8 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>5</number>
        </property>
        <item>
         <widget class="QLabel" name="label">
@@ -77,33 +74,6 @@
           <string>坐标：(   -   ,   -   )  灰度值：  -  </string>
          </property>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QRadioButton" name="radioButton">
-           <property name="text">
-            <string>边缘</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_2">
-           <property name="text">
-            <string>填充</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
       </layout>
      </item>

@@ -7,23 +7,19 @@ DESTDIR         = ../plugins
 
 
 HEADERS += \
-    XmlRead.h \
     echoplugin.h \
     imagedetectbase.h \
     imagegroupbase.h \
     test.h \
-    tinyxml2.h \
     totalalg.h \
     totaltestwidget.h \
     totaltestwidgetr.h
 
 SOURCES += \
-    XmlRead.cpp \
     echoplugin.cpp \
     imagedetectbase.cpp \
     imagegroupbase.cpp \
     test.cpp \
-    tinyxml2.cpp \
     totalalg.cpp \
     totaltestwidget.cpp \
     totaltestwidgetr.cpp

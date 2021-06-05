@@ -1,7 +1,7 @@
-#include "cgetcircleLen.h"
+﻿#include "cgetcircleLen.h"
 #include "../commonUsage/commonDef.h"
 #include "qdebug.h"
-#include "XmlRead.h"
+#include "utils/XmlRead.h"
 
 namespace CSHDetect {
 

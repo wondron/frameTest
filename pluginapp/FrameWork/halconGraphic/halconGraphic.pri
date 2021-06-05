@@ -6,3 +6,6 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/halconwidget.cpp
+
+
+include(../../dependence/halcon/halcon.pri)

@@ -1,6 +1,6 @@
 #include "ccheckhanregwidget.h"
 #include "ui_ccheckhanregwidget.h"
-#include "commonUsage/imageviewerhalcon.h"
+#include "halconGraphic/halconwidget.h"
 #include "qmessagebox.h"
 #include "commonUsage/algorithm.h"
 #include "commonUsage/commonDef.h"
@@ -17,10 +17,10 @@ class CCheckHanRegWidgetPrivate
 public:
     CCheckHanRegWidgetPrivate()
     {
-        m_widget = new Graphics::ImageViewerHalcon();
+        m_widget = new Graphics::halconWidget();
         m_pam = new CCheckHanReg();
     }
-    Graphics::ImageViewerHalcon* m_widget;
+    Graphics::halconWidget* m_widget;
     ReverRegionS m_region;
     CCheckHanReg* m_pam;
 

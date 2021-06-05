@@ -1,6 +1,6 @@
 #include "cgettapeanglewidget.h"
 #include "ui_cgettapeanglewidget.h"
-#include "commonUsage/imageviewerhalcon.h"
+#include "halconGraphic/halconwidget.h"
 #include "qmessagebox.h"
 #include "commonUsage/algorithm.h"
 #include "commonUsage/commonDef.h"
@@ -17,11 +17,11 @@ class CGetTapeAngleWidgetPrivate
 public:
     CGetTapeAngleWidgetPrivate()
     {
-        m_widget = new Graphics::ImageViewerHalcon();
+        m_widget = new Graphics::halconWidget();
         m_pam = new CGetTapeAngle();
     }
 
-    Graphics::ImageViewerHalcon* m_widget;
+    Graphics::halconWidget* m_widget;
     ReverRegionS m_region;
     CGetTapeAngle* m_pam;
 

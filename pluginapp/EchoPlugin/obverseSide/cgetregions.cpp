@@ -1,7 +1,7 @@
-#include "cgetregions.h"
+﻿#include "cgetregions.h"
 #include "../commonUsage/algorithm.h"
 #include "../commonUsage/commonDef.h"
-#include "XmlRead.h"
+#include "utils/XmlRead.h"
 #include "QDebug"
 
 namespace CSHDetect{
