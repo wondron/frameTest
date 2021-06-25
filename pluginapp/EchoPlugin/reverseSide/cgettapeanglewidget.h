@@ -17,30 +17,19 @@ class CGetTapeAngleWidget : public QWidget
 public:
     explicit CGetTapeAngleWidget(QWidget* parent = nullptr);
     ~CGetTapeAngleWidget();
-
     void setRegions(const ReverRegionS& region);
-
     void setPam(CGetTapeAngle* pam);
+    CError detect();
 
 private:
-    HLineData getUpPam();
-
-    HLineData getDnPam();
-
-    VLineData getVPam();
+    void initialWidget();
 
 private slots:
-    void on_pushButton_clicked();
-
     void on_btn_singleDetct_clicked();
-
-    void on_btn_vDetect_clicked();
-
-    void on_btn_upDetect_clicked();
-
-    void on_btn_doenDetect_clicked();
-
     void on_btn_detect_clicked();
+    void on_cmbx_quadrant_currentIndexChanged(int index);
+    void getPam();
+    void on_btn_pamRead_clicked();
 
 private:
     Ui::CGetTapeAngleWidget* ui;

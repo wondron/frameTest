@@ -25,6 +25,12 @@ public:
      */
     QWidget* imageWindow();
 
+    /**
+     * @brief image: 返回当前图像
+     * @return
+     */
+    HalconCpp::HObject currentImage();
+
 public slots:
     void setFilePath(const QString& filePath);
 

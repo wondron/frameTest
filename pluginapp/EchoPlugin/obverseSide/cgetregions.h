@@ -8,6 +8,8 @@ namespace CSHDetect {
     #define CONSTIMG const HalconCpp::HObject&
 #endif
 
+typedef const int cint ;
+
 class CGetRegionsPrivate;
 class CGetRegions
 {
@@ -34,31 +36,31 @@ public:
     /**
      * @brief getBlackBangRoi：中间固定棒
      */
-    CError getBlackBangRoi(CONSTIMG hsvVImg, HalconCpp::HObject& darkBangRoi, const int maxThre = 20);
+    CError getBlackBangRoi(CONSTIMG hsvVImg, HalconCpp::HObject& darkBangRoi, cint maxThre = 20);
 
     /**
      * @brief getDarkRegion: 获取图像的黑色区域
      * @return
      */
     CError getDarkRegion(CONSTIMG RImg, CONSTIMG GImg, CONSTIMG BImg, HalconCpp::HObject& resImg,
-                         const int maxR = 30, const int maxG = 30, const int maxB = 30);
+                         cint maxR = 30, cint maxG = 30, cint maxB = 30);
     /**
      * @brief getWhiteRegion：获取图像的白色区域
      */
     CError getWhiteRegion(CONSTIMG RImg, CONSTIMG GImg, CONSTIMG BImg,HalconCpp::HObject& resImg,
-                          const int minR = 200, const int minG = 200, const int minB = 200);
+                          cint minR = 200, cint minG = 200, cint minB = 200);
 
     /**
      * @brief getWhiteRegion：获取图像的HsvRoi
      * 就是大致的蓝胶区域
      */
     CError getHsvRoi(CONSTIMG hsvH, CONSTIMG hsvS, CONSTIMG hsvV, HalconCpp::HObject &hsvRoi,
-                     const int minH = 200, const int maxH = 50, const int minS = 200, const int maxV = 60);
+                     cint minH = 200, cint maxH = 50, cint minS = 200, cint maxV = 60);
 
     /**
      * @brief getDeepRedRegion: 也是求大致的蓝色区域
      */
-    CError getDeepRedRegion(CONSTIMG RImg, HalconCpp::HObject &redRegion, const int maxRed = 9);
+    CError getDeepRedRegion(CONSTIMG RImg, HalconCpp::HObject &redRegion, cint maxRed = 9);
 
     /**
      * @brief getBlueRegion : 最终的胶带区域
@@ -68,14 +70,13 @@ public:
     /**
      * @brief getTapeRegion: 底部的特氟龙胶带区域
      */
-    CError getTapeRegion(CONSTIMG Rimg, CONSTIMG whiteRegion, HalconCpp::HObject &tapeRegion,
-                         int tapeHoleSize = 10, double slctRange = 0.15);
+    CError getTapeRegion(RegionS& res, double guassSigma = 2.3, double guassFactor = 1.6, cint thresMax = -3, cint tapeHole = 10);
 
     /**
      * @brief getWeldRoi: 焊印Roi
      */
     CError getWeldRoi(CONSTIMG blackBangRegion, CONSTIMG blueRegion, HalconCpp::HObject &weldRoi, int& weldRegSize,
-                      int dilationSize = 3100, int minArea = 100000);
+                      cint dilationSize = 3100, cint minArea = 100000);
 private:
     CGetRegionsPrivate* d;
     QString taskName = "GetRegions";

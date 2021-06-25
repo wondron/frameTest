@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CGetTapeAnglePam</class>
+ <widget class="QWidget" name="CGetTapeAnglePam">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>167</width>
+    <height>422</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>5</number>
+   </property>
+   <property name="topMargin">
+    <number>5</number>
+   </property>
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <property name="bottomMargin">
+    <number>5</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="grpbx_Pos">
+     <property name="title">
+      <string>位置调整</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>X偏移</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spin_XBia">
+        <property name="minimum">
+         <number>-9999</number>
+        </property>
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Y偏移</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spin_YBia">
+        <property name="minimum">
+         <number>-9999</number>
+        </property>
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>线方向</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="cmbx_direct">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>上下</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>左右</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>检测长度</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="spin_lineWid">
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+        <property name="value">
+         <number>500</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>检测次数</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="spin_dtctTime">
+        <property name="value">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>角度下限</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QSpinBox" name="spin_angleDn">
+        <property name="minimum">
+         <number>-180</number>
+        </property>
+        <property name="maximum">
+         <number>0</number>
+        </property>
+        <property name="value">
+         <number>-10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>角度上限</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QSpinBox" name="spin_angleUp">
+        <property name="minimum">
+         <number>-180</number>
+        </property>
+        <property name="maximum">
+         <number>180</number>
+        </property>
+        <property name="value">
+         <number>4</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grpbx_Measure">
+     <property name="title">
+      <string>Measurepos</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Len1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spin_len1">
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+        <property name="value">
+         <number>200</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Len2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spin_len2">
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>极性</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="cmbx_transition">
+        <item>
+         <property name="text">
+          <string>ALL</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Posi</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nage</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_19">
+        <property name="text">
+         <string>sigma</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="spin_sigma">
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_20">
+        <property name="text">
+         <string>阈值</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QSpinBox" name="spin_threshold">
+        <property name="value">
+         <number>20</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>点选择</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="cmbx_slctPnt">
+        <item>
+         <property name="text">
+          <string>ALL</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>First</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Last</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_getPam">
+     <property name="text">
+      <string>确认修改</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>spin_XBia</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>12</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_YBia</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>16</x>
+     <y>408</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cmbx_direct</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>25</x>
+     <y>414</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_lineWid</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>109</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>37</x>
+     <y>402</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_dtctTime</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>92</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>43</x>
+     <y>398</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_angleDn</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>157</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>33</x>
+     <y>410</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_angleUp</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>78</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>51</x>
+     <y>406</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_len1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>78</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>59</x>
+     <y>405</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_len2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>68</x>
+     <y>414</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cmbx_slctPnt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>109</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>78</x>
+     <y>415</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cmbx_transition</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>313</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>86</x>
+     <y>414</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_sigma</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>104</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_threshold</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_getPam</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>127</x>
+     <y>371</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>127</x>
+     <y>406</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

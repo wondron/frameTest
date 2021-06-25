@@ -123,6 +123,112 @@
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_getMidRegion">
+        <property name="text">
+         <string>获取中心区域</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>小阈值</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spin_minthre">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+          <property name="value">
+           <number>20</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Cu位置</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cmb_cuPos">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>上</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>下</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>左</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>右</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_getCuPos">
+        <property name="text">
+         <string>检测</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="topMargin">
          <number>0</number>
@@ -145,6 +251,13 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_pamRead">
+        <property name="text">
+         <string>获取参数</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="btn_detect">

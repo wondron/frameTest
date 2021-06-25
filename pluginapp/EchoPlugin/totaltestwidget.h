@@ -22,7 +22,9 @@ public:
 
 private slots:
     void on_btn_getFilePath_clicked();
+
     void getFilename(const QString& file);
+
     void OnPamSetDetectDone();
 
     void on_btn_loadPam_clicked();

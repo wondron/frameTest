@@ -54,9 +54,12 @@ DetectResult_t CReverseSideDetect::detect(HalconCpp::HObject img)
 
         //焊印数量确定
         err = m_grpHanreg->detect(img, region, rects);
-        if(err.code() == NG){
+        if(err.code() == HANSIZE)
             di.Rects = changetoRect(rects);
-        }
+
+        if(err.code() == 0)
+            result.detectRects.append(changetoRect(rects));
+
         CHECKAlGERR(err, di);
 
         //胶带偏角检测

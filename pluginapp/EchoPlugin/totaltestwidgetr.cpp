@@ -60,6 +60,7 @@ totalTestWidgetR::totalTestWidgetR(QWidget *parent) :
 
     connect(d->m_widget, SIGNAL(currentFileName(QString)), this, SLOT(getFilename(QString)));
     connect(d->m_regionWidget, SIGNAL(detectDone()), this, SLOT(OnPamSetDetectDone()));
+    connect(d->m_hanWidget, SIGNAL(detectDone()), this, SLOT(OnHanDetectDone()));
 }
 
 totalTestWidgetR::~totalTestWidgetR()
@@ -106,5 +107,37 @@ void totalTestWidgetR::OnPamSetDetectDone()
 {
     d->regions = d->m_regionWidget->getRegons();
     d->m_hanWidget->setRegions(d->regions);
+}
+
+void totalTestWidgetR::OnHanDetectDone()
+{
+    d->regions = d->m_hanWidget->getRegions();
     d->m_angleWidget->setRegions(d->regions);
+}
+
+void totalTestWidgetR::on_btn_before_clicked()
+{
+    int idx = ui->tabWidget->currentIndex();
+
+    ui->tabWidget->setCurrentIndex(--idx);
+}
+
+void totalTestWidgetR::on_btn_next_clicked()
+{
+
+    int idx = ui->tabWidget->currentIndex();
+
+    ui->tabWidget->setCurrentIndex(++idx);
+}
+
+void totalTestWidgetR::on_btn_detect_clicked()
+{
+    CError err;
+    err = d->m_regionWidget->detect();
+    if(err.isWrong()) return;
+
+    err = d->m_hanWidget->detect();
+    if(err.isWrong()) return;
+
+    d->m_angleWidget->detect();
 }

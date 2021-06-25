@@ -90,6 +90,29 @@ const ReverRegionS& CGetReRegionsWidget::getRegons() const
     return d->regions;
 }
 
+CError CGetReRegionsWidget::detect()
+{
+    err = Algorithm::objIsEmpty(d->img);
+    if (err.isWrong()){
+        QMessageBox::warning(this, "warnning", err.msg());
+        return 1;
+    }
+
+    err = d->pam->detect(d->img, d->regions);
+    if (err.isWrong()){
+        QMessageBox::warning(this, "warnning", err.msg());
+        return 1;
+    }
+
+    d->widgetList[0]->showObj(d->regions.batteryRegion);
+    d->widgetList[1]->showObj(d->regions.midRegion);
+    //d->widgetList[2]->showObj(d->regions.blueTapesReg);
+    //d->widgetList[3]->showObj(d->regions.dblTapeReg);
+    emit detectDone();
+
+    return 0;
+}
+
 void CGetReRegionsWidget::setDetectImage(const QString& temPath)
 {
     if (temPath.isEmpty()) return;
@@ -143,9 +166,12 @@ void CGetReRegionsWidget::on_tabWidget_currentChanged(int index)
 void CGetReRegionsWidget::on_btn_battery_clicked()
 {
     int minThre = ui->spin_batteryMinThre->value();
-    int ero = ui->spin_baterryEro->value();
+    int ero = ui->spin_batterryEro->value();
     int inx = ui->tabWidget->currentIndex();
-    err = d->pam->getBatteryRegion(d->img, d->regions.batteryRegion, minThre, ero);
+    int slctNum =ui->spin_batterySlctNum->value();
+    int gridW = ui->spin_batteryGridW->value();
+    int gridH = ui->spin_batteryGridH->value();
+    err = d->pam->getBatteryRegion(d->img, d->regions.batteryRegion, gridW, gridH, minThre, ero, slctNum);
 
     if (err.isWrong()) SENDERR(err.msg());
 
@@ -154,12 +180,12 @@ void CGetReRegionsWidget::on_btn_battery_clicked()
 
 void CGetReRegionsWidget::on_btn_mid_clicked()
 {
+    int dire = ui->comb_batDire->currentIndex();
     int thre = ui->spin_midThre->value();
+    int ero  = ui->spin_midero->value();
+    int dila = ui->spin_midDila->value();
 
-    err = Algorithm::objIsEmpty(d->regions.batteryRegion);
-    if (err.isWrong()) SENDERR(err.msg());
-
-    err = d->pam->getMidRegion(d->img, d->regions.batteryRegion, d->regions.midRegion, thre);
+    err = d->pam->getMidRegion(d->img, d->regions.batteryRegion, d->regions.midRegion, dire, thre, dila, ero);
     if (err.isWrong()) SENDERR(err.msg());
 
     int inx = ui->tabWidget->currentIndex();
@@ -201,20 +227,7 @@ void CGetReRegionsWidget::on_btn_dblTape_clicked()
 
 void CGetReRegionsWidget::on_btn_test_clicked()
 {
-    err = Algorithm::objIsEmpty(d->img);
-    if (err.isWrong())
-        SENDERR(err.msg());
-
-    err = d->pam->detect(d->img, d->regions);
-    if (err.isWrong())
-        SENDERR(err.msg());
-
-    d->widgetList[0]->showObj(d->regions.batteryRegion);
-    d->widgetList[1]->showObj(d->regions.midRegion);
-    d->widgetList[2]->showObj(d->regions.blueTapesReg);
-    d->widgetList[3]->showObj(d->regions.dblTapeReg);
-
-    emit detectDone();
+    detect();
 }
 
 }

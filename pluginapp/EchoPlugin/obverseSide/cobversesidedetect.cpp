@@ -48,7 +48,8 @@ DetectResult_t CObverseSideDetect::detect(HObject img)
     QList<int> errIndex;
     QList<LineInfo> lines;
     QVector<DetectLineInfo_t> ngLines, gdLines;
-
+    QVector<QRect> ngRects, gdRects;
+    DetectRectInfo_t cuRect;
     try {
         DetectDefectInfo_t di;
 
@@ -58,13 +59,27 @@ DetectResult_t CObverseSideDetect::detect(HObject img)
 
         //判定铜片位置
         m_grpCuPos->setImgSize(region.width, region.height);
-        err = m_grpCuPos->detect(region.m_hsvHImg);
+        err = m_grpCuPos->detect(region, gdRects, ngRects);
+        for (auto rect : gdRects) {
+            cuRect.rect = rect;
+            result.detectRects.push_back(cuRect);
+        }
+
+        for (auto rect : ngRects) {
+            cuRect.rect = rect;
+            di.Rects.push_back(cuRect);
+        }
         CHECKAlGERR(err, di);
+        result.detectRects.push_back(cuRect);
+
+        if (region.TapeNum == 2)
+            goto thread_end;
 
         err = m_grpCircleLen->detect(region, lines, errIndex);
         if (err.isWrong() && (err.code() != LACKAREA)) {
             CHECKAlGERR(err, di);
         }
+
         trans2LineInfo(lines, errIndex, gdLines, ngLines);
         bool bres = (err.code() == LACKAREA) ? false : true;
         resString = Algorithm::getErrDescri(err.code());
@@ -73,6 +88,8 @@ DetectResult_t CObverseSideDetect::detect(HObject img)
         di.clsName = resString;
 
 thread_end:
+        qDebug() << "err info: " << err.code() << '\n' << err.msg();
+
         finalRes = !err.isWrong();
         result.detectDefect.push_back(di);
         result.detectLines = gdLines;

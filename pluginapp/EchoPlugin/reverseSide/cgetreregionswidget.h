@@ -27,6 +27,8 @@ public:
 
     const ReverRegionS& getRegons() const;
 
+    CError detect();
+
 public slots:
     void setDetectImage(const QString& temPath);
 

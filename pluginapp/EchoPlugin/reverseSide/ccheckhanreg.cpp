@@ -17,7 +17,7 @@ public:
 
     int hanHoleSize = 15;
     int maxHanArea = 180;
-    int minHanRegionSize = 10;
+    int minHanRegionSize = 15;
 };
 
 CCheckHanReg::CCheckHanReg():
@@ -26,16 +26,16 @@ CCheckHanReg::CCheckHanReg():
 
 }
 
-CError CCheckHanReg::detect(const HObject& obj, const ReverRegionS& res, QList<QRect> &rects)
+CError CCheckHanReg::detect(const HObject& obj, ReverRegionS& res, QList<QRect> &rects)
 {
     HObject hanRegion;
-    CError err = getHanRegion(obj, res.dblTapeReg, hanRegion,
+    CError err = getHanRegion(obj, res.midRegion, res.hanregion,
                               d->hanHoleSize, d->dynThreValu, d->dynThreKernel,
                               d->maxHanArea, d->minHanRegionSize, rects);
     CHECKERR(err);
 
     if (rects.size() < d->controlNum)
-        return CError(NG, QString("CCheckHanReg size is not %1").arg(d->controlNum));
+        return CError(HANSIZE, QString("CCheckHanReg size is not %1").arg(d->controlNum));
 
     return 0;
 }
@@ -63,12 +63,12 @@ CError CCheckHanReg::pamRead(const char* xmlfilePath)
     }
 }
 
-CError CCheckHanReg::getHanRegion(const HObject& dst, const HObject& doubleTapeRoi, HObject& hanRegion,
+CError CCheckHanReg::getHanRegion(const HObject& dst, const HObject& midRegion, HObject& hanRegion,
                                   int hanHoleSize, int dynThreValu, int dynKernel, int maxHanArea, int minHanRegionSize, QList<QRect> &rects)
 {
     try {
         CHECKEMPIMG(dst, "getHanRegion::Image is empty");
-        CHECKEMPIMG(doubleTapeRoi, "getHanRegion::doubleTapeRoi is empty");
+        CHECKEMPIMG(midRegion, "getHanRegion::midRegion is empty");
         CHECKTHREVALUE(dynThreValu, "getHanRegion::dynThreValu out of range");
 
         HObject  ImageReduced, ImageMean, RegionDynThresh;
@@ -78,7 +78,7 @@ CError CCheckHanReg::getHanRegion(const HObject& dst, const HObject& doubleTapeR
         HTuple tupTiao, tupMin, tupMax;
         HTuple holeSize;
 
-        ReduceDomain(dst, doubleTapeRoi, &ImageReduced);
+        ReduceDomain(dst, midRegion, &ImageReduced);
         RegionDynThresh = Algorithm::dynThre(ImageReduced, dynThreValu, dynKernel);
         Connection(RegionDynThresh, &ConnectedRegions1);
 
@@ -100,7 +100,6 @@ CError CCheckHanReg::getHanRegion(const HObject& dst, const HObject& doubleTapeR
 
         rects.clear();
         for(int i = 0; i < row1.Length(); i++){
-            qDebug()<<"x,y" <<  col1[i].D() << row1[i].D() << ", 22 :" << col2[i].D() << row2[i].D();
             QRect rect(QPoint(col1[i].D(), row1[i].D()), QPoint(col2[i].D(),row2[i].D()));
             rects.push_back(rect);
         }

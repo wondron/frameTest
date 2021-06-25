@@ -63,33 +63,27 @@ int CItemListWidget::setFilePath(const QString &filepath)
         dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot);
         dir.setSorting(QDir::Name);
 
-        qDebug() << "CItemListWidget::setFilePath 1";
         for(auto i : d->filter)
             qDebug()<<"filters:"<< i;
 
         if(d->filter.size())
             dir.setNameFilters(d->filter);
 
-        qDebug() << "1";
         d->filePath = filepath;
         d->dir = dir;
 
         d->infoList = dir.entryInfoList();
 
-        qDebug() << "2";
         int listsize = this->width() - 120;
 
-        qDebug() << "3";
         d->isLoading = true;
         ui->listWidget->clear();
         d->isLoading = false;
 
-        qDebug() << "CItemListWidget::setFilePath 2";
         thread->setFileList(d->infoList);
         thread->setMapSize(listsize);
         thread->start();
 
-        qDebug() << "CItemListWidget::setFilePath 3";
         return 0;
     }  catch (...) {
         qDebug() << "CItemListWidget::setFilePath happen unexception";

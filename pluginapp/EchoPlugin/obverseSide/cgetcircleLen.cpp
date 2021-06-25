@@ -15,10 +15,9 @@ public:
 
     int direction = LEFTRIGHT;
 
+    int tapeDetectNum = 4; //蓝胶区域的检测数
     int ringRadius = 210;
-
     int circleCenterDilateLen = 4500;
-
     int psToLineDisCtrl = 300;
 
     double lRow = 0;
@@ -235,25 +234,11 @@ CError CGetCircleLen::pamRead(const char* xmlfilePath)
     try {
         std::map<std::string, xmlInfo> res = xmlRead.parseXML(xmlfilePath, taskName.toLocal8Bit().data());
 
-        auto iterMBA = res.find("direction");
-        if (iterMBA != res.end()) {
-            d->direction = iterMBA->second.value;
-        }
-
-        auto iterEPH = res.find("ringRadius");
-        if (iterEPH != res.end()) {
-            d->ringRadius = iterEPH->second.value;
-        }
-
-        auto iterIMS = res.find("circleCenterDilateLen");
-        if (iterIMS != res.end()) {
-            d->circleCenterDilateLen = iterIMS->second.value;
-        }
-
-        auto iterORegionW = res.find("psToLineDisCtrl");
-        if (iterORegionW != res.end()) {
-            d->psToLineDisCtrl = iterORegionW->second.value;
-        }
+        READPAM(d->direction, "direction", res);
+        READPAM(d->tapeDetectNum, "tapeDetectNum", res);
+        READPAM(d->ringRadius, "ringRadius", res);
+        READPAM(d->circleCenterDilateLen, "circleCenterDilateLen", res);
+        READPAM(d->psToLineDisCtrl, "psToLineDisCtrl", res);
 
         return 0;
 

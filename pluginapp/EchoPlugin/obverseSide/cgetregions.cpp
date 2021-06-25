@@ -42,8 +42,10 @@ public:
     int deepRedThr = 9;
 
     //底面胶带区域
-    int tapeholeSize = 10;
-    double slctRange = 0.15;
+    double guassSigma = 2.3;
+    double guassFactor = 1.6;
+    int thresMax = -3;
+    double tapeHole = 10;
 
     //焊印Roi区域
     int weldDilation = 3100;
@@ -87,15 +89,16 @@ CError CGetRegions::detect(const HObject &obj, RegionS &res)
     err = getBlueRegion(res.HSVRoi, res.DarkRegion, res.DeepRedRegion, res.BlueRegion);
     CHECKERR(err);
 
-    err = getTapeRegion(res.m_RImg, res.WhiteRegion, res.TapeRegion, d->tapeholeSize, d->slctRange);
+    err = getTapeRegion(res, d->guassSigma, d->guassFactor, d->thresMax, d->tapeHole);
     CHECKERR(err);
 
     int size;
     err = getWeldRoi(res.BlackBangRegion, res.BlueRegion, res.WeldRoi, size, d->weldDilation, d->weldMinArea);
     CHECKERR(err);
 
+    res.TapeNum = size;
     if(size != d->weldSize)
-        return CError(REGIONNUM, QString("size of weld is not %1").arg(d->weldSize));
+        return CError(REGIONNUM, QString("size of weld is not %1,result is %2").arg(d->weldSize).arg(size));
     return 0;
 }
 
@@ -130,90 +133,31 @@ CError CGetRegions::pamRead(const char *xmlfilePath)
     try {
         std::map<std::string, xmlInfo> res = xmlRead.parseXML(xmlfilePath, taskName.toLocal8Bit().data());
 
-        auto iterMBB = res.find("blkBangMaxThre");
-        if (iterMBB != res.end()) {
-            d->blkBangMaxThre = iterMBB->second.value;
-        }
+        READPAM(d->blkBangMaxThre, "blkBangMaxThre", res);
 
-        iterMBB = res.find("darkMaxR");
-        if (iterMBB != res.end()) {
-            d->darkMaxR = iterMBB->second.value;
-        }
+        READPAM(d->darkMaxR, "darkMaxR", res);
+        READPAM(d->darkMaxG, "darkMaxG", res);
+        READPAM(d->darkMaxB, "darkMaxB", res);
 
-        iterMBB = res.find("darkMaxG");
-        if (iterMBB != res.end()) {
-            d->darkMaxG = iterMBB->second.value;
-        }
+        READPAM(d->whiteMinR, "whiteMinR", res);
+        READPAM(d->whiteMinG, "whiteMinG", res);
+        READPAM(d->whiteMinB, "whiteMinB", res);
 
-        iterMBB = res.find("darkMaxB");
-        if (iterMBB != res.end()) {
-            d->darkMaxB = iterMBB->second.value;
-        }
+        READPAM(d->minhsvH, "minhsvH", res);
+        READPAM(d->maxhsvH, "maxhsvH", res);
+        READPAM(d->minhsvS, "minhsvS", res);
+        READPAM(d->maxhsvV, "maxhsvV", res);
 
-        iterMBB = res.find("whiteMinR");
-        if (iterMBB != res.end()) {
-            d->whiteMinR = iterMBB->second.value;
-        }
+        READPAM(d->deepRedThr, "deepRedThr", res);
 
-        iterMBB = res.find("whiteMinG");
-        if (iterMBB != res.end()) {
-            d->whiteMinG = iterMBB->second.value;
-        }
+        READPAM(d->guassSigma, "guassSigma", res);
+        READPAM(d->guassFactor, "guassFactor", res);
+        READPAM(d->thresMax, "thresMax", res);
+        READPAM(d->tapeHole, "tapeHole", res);
 
-        iterMBB = res.find("whiteMinB");
-        if (iterMBB != res.end()) {
-            d->whiteMinG = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("minhsvH");
-        if (iterMBB != res.end()) {
-            d->minhsvH = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("maxhsvH");
-        if (iterMBB != res.end()) {
-            d->maxhsvH = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("minhsvS");
-        if (iterMBB != res.end()) {
-            d->minhsvS = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("maxhsvV");
-        if (iterMBB != res.end()) {
-            d->maxhsvV = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("deepRedThr");
-        if (iterMBB != res.end()) {
-            d->deepRedThr = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("tapeholeSize");
-        if (iterMBB != res.end()) {
-            d->tapeholeSize = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("slctRange");
-        if (iterMBB != res.end()) {
-            d->slctRange = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("weldDilation");
-        if (iterMBB != res.end()) {
-            d->weldDilation = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("weldMinArea");
-        if (iterMBB != res.end()) {
-            d->weldMinArea = iterMBB->second.value;
-        }
-
-        iterMBB = res.find("weldSize");
-        if (iterMBB != res.end()) {
-            d->weldSize = iterMBB->second.value;
-        }
+        READPAM(d->weldDilation, "weldDilation", res);
+        READPAM(d->weldMinArea,  "weldMinArea", res);
+        READPAM(d->weldSize,     "weldSize", res);
 
         return 0;
 
@@ -222,112 +166,56 @@ CError CGetRegions::pamRead(const char *xmlfilePath)
     }
 }
 
-CError CGetRegions::getTapeRegion(const HObject &Rimg, const HObject &whiteRegion, HObject &tapeRegion, int tapeHoleSize, double slctRange)
+CError CGetRegions::getTapeRegion(RegionS& res, double guassSigma, double guassFactor, cint thresMax, cint tapesize)
 {
     try {
-        CHECKEMPIMG(Rimg, "getTapeRegion::Rimg is empty");
-        CHECKEMPIMG(whiteRegion, "getTapeRegion::whiteRegion is empty");
+        HObject BImage = res.m_BImg;
+        CHECKEMPIMG(BImage, "getTapeRegion::Bimg is empty");
 
-        HObject  ho_ImageMean, ho_RegionDynThresh, ho_Rectangle;
-        HObject  ho_RegionDilation, ho_ConnectedRegions1, ho_SelectedRegions1;
-        HObject  ho_RegionIntersection, ho_ConnectedRegions2, ho_SelectedRegions;
-        HObject  ho_SelectedRegions3, ho_SelectedRegionsM, ho_SelectedRegionsM1;
-        HObject  ho_SelectedRegionsM2, ho_SelectedRegionsM3, ho_RegionUnion1;
-        HObject  ho_RegionDifference, ho_RegionDilation1, ho_RegionOpening;
-        HObject  ho_RegionFillUp, ho_ConnectedRegions, ho_SelectedRegions2;
+        HObject  diffOfGauss, region, connectedRegions;
+        HObject  slctRegion, slctRegion1, hUnion;
+        HObject  RegionDilation, RegionFillUp, RegionErosion;
+        HObject  hConnect, RegionClosing;
 
-        HTuple  hv_Row, hv_Column, hv_Phi, hv_Length1;
-        HTuple  hv_Length2, hv_Sorted, hv_Array, hv_Uniq, hv_ElementValue;
-        HTuple  hv_Times, hv_Index, hv_Indices, hv_Length, hv_Sorted2;
-        HTuple  hv_Max, hv_Max1, hv_Max2, hv_Max3, hv_Indices1;
-        HTuple  hv_Indices2, hv_Indices3, hv_MaxElement, hv_MaxElement1;
-        HTuple  hv_MaxElement2, hv_MaxElement3, hv_selectRange;
-        HTuple  hv_Area, hv_Row1, hv_Column1, hv_Sorted1;
+        HTuple  Area, Row, Column, Sorted;
+        HTuple tapeHole = tapesize;
 
-        //动态阈值求区域
-        MeanImage(Rimg, &ho_ImageMean, tapeHoleSize*1.5, 1);
-        DynThreshold(Rimg, ho_ImageMean, &ho_RegionDynThresh, 10, "light");
-        GenRectangle1(&ho_Rectangle, 0, 0, tapeHoleSize, 1);
-        Dilation1(ho_RegionDynThresh, ho_Rectangle, &ho_RegionDilation, 1);
-        Connection(ho_RegionDilation, &ho_ConnectedRegions1);
-        SelectShape(ho_ConnectedRegions1, &ho_SelectedRegions1, "height", "and", 13*tapeHoleSize, 5000000);
-        CHECKEMPIMG(ho_SelectedRegions1, "getTapeRegion::ho_SelectedRegions1 is empty");
+        DiffOfGauss(BImage, &diffOfGauss, guassSigma, guassFactor);
+        Threshold(diffOfGauss, &region, -67, thresMax);
+        Connection(region, &connectedRegions);
 
-        Intersection(ho_RegionDynThresh, ho_SelectedRegions1, &ho_RegionIntersection);
-        Connection(ho_RegionIntersection, &ho_ConnectedRegions2);
-        SelectShape(ho_ConnectedRegions2, &ho_SelectedRegions, "area", "and", 80, 99999999);
-        SelectShape(ho_SelectedRegions, &ho_SelectedRegions3, "rectangularity", "and", 0.1, 1);
-        CHECKEMPIMG(ho_SelectedRegions3, "getTapeRegion::ho_SelectedRegions3 is empty");
+        SelectShape(connectedRegions, &slctRegion, ((HTuple("width").Append("height")).Append("holes_num")),
+            "and", ((HTuple(0).Append(0)).Append(0)), ((3*tapeHole).TupleConcat(3*tapeHole)).TupleConcat(0));
 
-        SmallestRectangle2(ho_SelectedRegions3, &hv_Row, &hv_Column, &hv_Phi, &hv_Length1, &hv_Length2);
+        SelectShape(slctRegion, &slctRegion1, "area", "and", 3*tapeHole, 40*tapeHole);
+        SelectShape(slctRegion1, &slctRegion1, "compactness", "and", 0, 2);
 
-        TupleSort(hv_Phi, &hv_Sorted);
-        hv_Array = (hv_Sorted.TupleString(".1f")).TupleNumber();
-        TupleUniq(hv_Array, &hv_Uniq);
+        Union1(slctRegion1, &hUnion);
+        DilationRectangle1(hUnion, &RegionDilation, tapeHole, tapeHole);
+        FillUp(RegionDilation, &RegionFillUp);
+        ErosionRectangle1(RegionFillUp, &RegionErosion, tapeHole, tapeHole);
+        Connection(RegionErosion, &hConnect);
+        AreaCenter(hConnect, &Area, &Row, &Column);
+        TupleSort(Area, &Sorted);
 
-        hv_ElementValue = HTuple();
-        hv_Times = HTuple();
+        SelectShape(hConnect, &slctRegion1, "area", "and",
+                    HTuple(Sorted[(Sorted.TupleLength())-4]),
+                    HTuple(Sorted[(Sorted.TupleLength())-1]));
 
-        HTuple end_val20 = (hv_Uniq.TupleLength())-1;
-        HTuple step_val20 = 1;
-        for (hv_Index=0; hv_Index.Continue(end_val20, step_val20); hv_Index += step_val20)
-        {
-          TupleFind(hv_Array, HTuple(hv_Uniq[hv_Index]), &hv_Indices);
-          TupleLength(hv_Indices, &hv_Length);
-          hv_ElementValue = hv_ElementValue.TupleConcat(HTuple(hv_Uniq[hv_Index]));
-          hv_Times = hv_Times.TupleConcat(hv_Length);
-        }
-
-        TupleSort(hv_Times, &hv_Sorted2);
-        hv_Max =  ((const HTuple&)hv_Sorted2)[(hv_Sorted2.TupleLength())-1];
-        hv_Max1 = ((const HTuple&)hv_Sorted2)[(hv_Sorted2.TupleLength())-2];
-        hv_Max2 = ((const HTuple&)hv_Sorted2)[(hv_Sorted2.TupleLength())-3];
-        hv_Max3 = ((const HTuple&)hv_Sorted2)[(hv_Sorted2.TupleLength())-4];
-
-        TupleFind(hv_Times, hv_Max, &hv_Indices);
-        TupleFind(hv_Times, hv_Max1, &hv_Indices1);
-        TupleFind(hv_Times, hv_Max2, &hv_Indices2);
-        TupleFind(hv_Times, hv_Max3, &hv_Indices3);
-
-        hv_MaxElement  = HTuple(hv_ElementValue[hv_Indices]);
-        hv_MaxElement1 = HTuple(hv_ElementValue[hv_Indices1]);
-        hv_MaxElement2 = HTuple(hv_ElementValue[hv_Indices2]);
-        hv_MaxElement3 = HTuple(hv_ElementValue[hv_Indices3]);
-
-        hv_selectRange = slctRange;
-        SelectShape(ho_SelectedRegions3, &ho_SelectedRegionsM,  "phi", "and", hv_MaxElement-hv_selectRange,  hv_MaxElement+hv_selectRange);
-        SelectShape(ho_SelectedRegions3, &ho_SelectedRegionsM1, "phi", "and", hv_MaxElement1-hv_selectRange, hv_MaxElement1+hv_selectRange);
-        SelectShape(ho_SelectedRegions3, &ho_SelectedRegionsM2, "phi", "and", hv_MaxElement2-hv_selectRange, hv_MaxElement2+hv_selectRange);
-        SelectShape(ho_SelectedRegions3, &ho_SelectedRegionsM3, "phi", "and", hv_MaxElement3-hv_selectRange, hv_MaxElement3+hv_selectRange);
-
-        Union1(ho_SelectedRegionsM, &ho_RegionUnion1);
-        Union2(ho_RegionUnion1, ho_SelectedRegionsM1, &ho_RegionUnion1);
-        Union2(ho_RegionUnion1, ho_SelectedRegionsM2, &ho_RegionUnion1);
-        Union2(ho_RegionUnion1, ho_SelectedRegionsM3, &ho_RegionUnion1);
-        CHECKEMPIMG(ho_RegionUnion1, "getTapeRegion::ho_RegionUnion1 is empty");
-
-        Difference(ho_RegionUnion1, whiteRegion, &ho_RegionDifference);
-        DilationRectangle1(ho_RegionDifference, &ho_RegionDilation1, tapeHoleSize, tapeHoleSize);
-        OpeningCircle(ho_RegionDilation1, &ho_RegionOpening, 10);
-        FillUp(ho_RegionOpening, &ho_RegionFillUp);
-        Connection(ho_RegionFillUp, &ho_ConnectedRegions);
-        AreaCenter(ho_ConnectedRegions, &hv_Area, &hv_Row1, &hv_Column1);
-        TupleSort(hv_Area, &hv_Sorted1);
-        SelectShape(ho_ConnectedRegions, &ho_SelectedRegions2, "area", "and", HTuple(hv_Sorted1[(hv_Sorted1.TupleLength())-4]),
-            HTuple(hv_Sorted1[(hv_Sorted1.TupleLength())-1]));
-        ErosionCircle(ho_SelectedRegions2, &tapeRegion, 5);
+        ClosingCircle(slctRegion1, &RegionClosing, 5*tapeHole);
+        ErosionCircle(RegionClosing, &res.TapeRegion, 3.5);
 
         return 0;
     }  catch (...) {
-        return CError(UNEXCEPTION, "CGetRegions::getBlackBangRoi unexception happen!");
+        return CError(UNEXCEPTION, "CGetRegions::getTapeRegion unexception happen!");
     }
 }
 
-CError CGetRegions::getWeldRoi(const HObject &blackBangRegion, const HObject &blueRegion, HObject &weldRoi, int& weldRegSize, int dilationSize, int minArea)
+CError CGetRegions::getWeldRoi(const HObject &blackBangRegion, const HObject &blueRegion, HObject &weldRoi, int& weldRegSize, cint dilationSize, cint minArea)
 {
     try {
         HObject  rectRoi, dilationReg, interRegion;
-        HObject  ho_ConnectedRegions, slctReg;
+        HObject  ho_connectedRegions, slctReg;
 
         CHECKEMPIMG(blueRegion, "getWeldRoi::blueRegion is empty");
         CHECKEMPIMG(blackBangRegion, "getWeldRoi::blackBangRegion is empty");
@@ -336,9 +224,17 @@ CError CGetRegions::getWeldRoi(const HObject &blackBangRegion, const HObject &bl
         GenRectangle1(&rectRoi, 0, 0, 1, dilationSize);
         Dilation1(blackBangRegion, rectRoi, &dilationReg, 1);
         Intersection(dilationReg, blueRegion, &interRegion);
-        Connection(interRegion, &ho_ConnectedRegions);
-        SelectShape(ho_ConnectedRegions, &slctReg, "area", "and", minArea, 9999999999);
+        DilationRectangle1(interRegion, &interRegion, 30, 10);
+        Connection(interRegion, &ho_connectedRegions);
+        SelectShape(ho_connectedRegions, &slctReg, "area", "and", minArea, 9999999999);
         CHECKEMPIMG(slctReg, "getWeldRoi::slctReg is empty");
+
+        HTuple nums, rows, cols;
+        AreaCenter(slctReg, &nums, &rows, &cols);
+        qDebug() << "cols num:"<< nums.Length();
+
+        for(int i = 0; i < nums.Length(); i++)
+            qDebug()<<"cols:" << nums[i].D();
 
         CountObj(slctReg, &num);
         weldRegSize = num.I();
@@ -425,7 +321,7 @@ CError CGetRegions::getWhiteRegion(const HObject &RImg, const HObject &GImg, con
 {
     try {
         HObject  ho_Region, ho_Region1, ho_Region2, ho_RegionIntersection;
-        HObject  ho_RegionOpening, ho_ConnectedRegions, ho_SelectedRegions;
+        HObject  ho_RegionOpening, ho_connectedRegions, ho_slctRegion;
         HObject  ho_SelectedRegions2, ho_Rectangle;
 
         CError res;
@@ -439,9 +335,7 @@ CError CGetRegions::getWhiteRegion(const HObject &RImg, const HObject &GImg, con
         CHECKTHREVALUE(minB, "getDarkRegion func: maxB out of range");
 
         Threshold(RImg, &ho_Region, minR, 255);
-
         Threshold(GImg, &ho_Region1, minG, 255);
-
         Threshold(BImg, &ho_Region2, minB, 255);
 
         Intersection(ho_Region2, ho_Region1, &ho_RegionIntersection);
@@ -449,16 +343,15 @@ CError CGetRegions::getWhiteRegion(const HObject &RImg, const HObject &GImg, con
         OpeningCircle(ho_Region, &ho_RegionOpening, 20);
         CHECKEMPIMG(ho_RegionOpening, "getWhiteRrgion func: ho_RegionOpening is empty");
 
-        Connection(ho_RegionOpening, &ho_ConnectedRegions);
-        SelectShape(ho_ConnectedRegions, &ho_SelectedRegions, "area", "and", 150000, 99999999);
-        CHECKEMPIMG(ho_SelectedRegions, "getWhiteRrgion func: ho_SelectedRegions is empty");
-
-        SelectShape(ho_SelectedRegions, &ho_SelectedRegions2, (HTuple("area").Append("rectangularity")),
+        Connection(ho_RegionOpening, &ho_connectedRegions);
+        SelectShape(ho_connectedRegions, &ho_slctRegion, "area", "and", 150000, 9999999999);
+        SelectShape(ho_connectedRegions, &ho_SelectedRegions2, (HTuple("area").Append("rectangularity")),
             "and", (HTuple(80000).Append(0.8)), (HTuple(1e+016).Append(1.11009)));
-        CHECKEMPIMG(ho_SelectedRegions2, "getWhiteRrgion func: ho_SelectedRegions2 is empty");
 
-        Union2(ho_SelectedRegions, ho_SelectedRegions2, &resImg);
+        Union2(ho_slctRegion, ho_SelectedRegions2, &resImg);
         Union1(resImg, &resImg);
+        CHECKEMPIMG(resImg, "getWhiteRrgion func: resImg is empty");
+
         GenRectangle1(&ho_Rectangle, 0, 0, 20, 20);
         Dilation1(resImg, ho_Rectangle, &resImg, 1);
         return 0;
@@ -483,7 +376,7 @@ CError CGetRegions::getHsvRoi(const HObject &hsvH, const HObject &hsvS, const HO
         CHECKTHREVALUE(maxH, "getHsvRoi func: maxH out of range");
 
         HObject  ho_VDarKRegion, ho_SLightRegion, ho_HLightRegion;
-        HObject  ho_HDarkRegion, ho_RegionUnion, ho_RegionUnion1;
+        HObject  ho_HDarkRegion, ho_hUnion, ho_RegionUnion1;
 
         Threshold(hsvV, &ho_VDarKRegion, 0, maxV);
 
@@ -493,10 +386,15 @@ CError CGetRegions::getHsvRoi(const HObject &hsvH, const HObject &hsvS, const HO
 
         Threshold(hsvH, &ho_HDarkRegion, 0, maxH);
 
-        Union2(ho_HLightRegion, ho_HDarkRegion, &ho_RegionUnion);
-        Union2(ho_RegionUnion, ho_VDarKRegion, &ho_RegionUnion1);
+        Union2(ho_HLightRegion, ho_HDarkRegion, &ho_hUnion);
+        Union2(ho_hUnion, ho_VDarKRegion, &ho_RegionUnion1);
         Difference(ho_SLightRegion, ho_RegionUnion1, &ho_RegionUnion1);
-        FillUp(ho_RegionUnion1, &hsvRoi);
+
+        FillUpShape(ho_RegionUnion1, &ho_RegionUnion1, "area", 1, 99999);
+        Connection(ho_RegionUnion1, &ho_RegionUnion1);
+
+        SelectShape(ho_RegionUnion1, &ho_RegionUnion1, "area", "and", 10000, 99999999999);
+        Union1(ho_RegionUnion1, &hsvRoi);
         return 0;
 
     }  catch (...) {
@@ -527,16 +425,18 @@ CError CGetRegions::getBlueRegion(const HObject &hsVRoi, const HObject &darkRegi
         CHECKEMPIMG(deepRedRegion, "getBlueRegion func: deepRedRegion is empty");
 
         HObject  ho_RegionDifference, ho_RegionIntersection2;
-        HObject  ho_ConnectedRegions, ho_SelectedRegions;
+        HObject  ho_connectedRegions, ho_slctRegion;
         HTuple  hv_Area, hv_Row, hv_Column, hv_Sorted;
 
         Difference(hsVRoi, darkRegion, &ho_RegionDifference);
         Intersection(ho_RegionDifference, deepRedRegion, &ho_RegionIntersection2);
-        Connection(ho_RegionIntersection2, &ho_ConnectedRegions);
-        AreaCenter(ho_ConnectedRegions, &hv_Area, &hv_Row, &hv_Column);
+        Connection(ho_RegionIntersection2, &ho_connectedRegions);
+        AreaCenter(ho_connectedRegions, &hv_Area, &hv_Row, &hv_Column);
         TupleSort(hv_Area, &hv_Sorted);
-        SelectShape(ho_ConnectedRegions, &ho_SelectedRegions, "area", "and", HTuple(hv_Sorted[(hv_Sorted.TupleLength())-2]), HTuple(hv_Sorted[(hv_Sorted.TupleLength())-1])+1);
-        FillUp(ho_SelectedRegions, &blueRegion);
+        SelectShape(ho_connectedRegions, &ho_slctRegion, "area", "and", HTuple(hv_Sorted[(hv_Sorted.TupleLength())-3]), HTuple(hv_Sorted[(hv_Sorted.TupleLength())-1])+1);
+        //FillUp(ho_slctRegion, &blueRegion);
+        SelectShape(ho_slctRegion, &ho_slctRegion, "area", "and", 200000, 9999999999);
+        FillUpShape(ho_slctRegion, &blueRegion, "area", 1, 999999);
 
         return 0;
     }  catch (...) {

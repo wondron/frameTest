@@ -2,7 +2,9 @@
 #include "ui_cgetcustrapposwidget.h"
 #include "halconGraphic/halconwidget.h"
 #include "commonUsage/algorithm.h"
+#include "commonUsage/comStruct.h"
 #include "qmessagebox.h"
+#include "qdebug.h"
 
 using namespace HalconCpp;
 using namespace CSHDetect;
@@ -25,6 +27,7 @@ public:
     int m_width;
     int m_height;
 
+    RegionS m_region;
     Graphics::halconWidget* m_widget;
     HObject m_img;
     CGetCuStrapPos* m_pam;
@@ -43,6 +46,17 @@ CGetCuStrapPosWidget::CGetCuStrapPosWidget(QWidget *parent) :
 CGetCuStrapPosWidget::~CGetCuStrapPosWidget()
 {
     delete ui;
+}
+
+void CGetCuStrapPosWidget::setRegions(const RegionS &region)
+{
+    d->m_region = region;
+
+    d->m_img = region.m_oriImg;
+    d->m_width = region.width;
+    d->m_height = region.height;
+
+    d->m_widget->setShowImage(d->m_region.m_oriImg);
 }
 
 void CGetCuStrapPosWidget::setImage(const HObject &obj)
@@ -65,31 +79,67 @@ void CGetCuStrapPosWidget::setImage(const HObject &obj)
 void CGetCuStrapPosWidget::setPam(CGetCuStrapPos *pam)
 {
     d->m_pam = pam;
-    ui->cmb_direction->setCurrentIndex(pam->strapDirection);
-    ui->spin_thre->setValue(pam->maxThre);
 }
 
 void CGetCuStrapPosWidget::on_btn_detect_clicked()
 {
-    if(Algorithm::objIsEmpty(d->m_img))
-        SENDERR("image is empty, cannt detect!");
+    QVector<QRect> ngInfo, gdInfo;
 
-    if(d->m_pam == nullptr)
-        SENDERR("pam is emppty");
+    d->m_pam->pamRead("D:\\work\\detect\\detection\\bin\\conf\\algorithm\\default\\detection.xml");
+    CError err = d->m_pam->detect(d->m_region, gdInfo, ngInfo);
 
-    int position;
-    HObject resObj;
+    qDebug() << gdInfo.size() << ngInfo.size();
+    try {
+        HObject hRect, hUnion;
+        GenEmptyObj(&hUnion);
+        for(auto resRec : gdInfo){
+            GenRectangle1(&hRect, resRec.top(), resRec.left(), resRec.bottom(), resRec.right());
+            Union2(hUnion, hRect, &hUnion);
+        }
+        for(auto resRec : ngInfo){
+            GenRectangle1(&hRect, resRec.top(), resRec.left(), resRec.bottom(), resRec.right());
+            Union2(hUnion, hRect, &hUnion);
+        }
 
-    int index = ui->cmb_direction->currentIndex() == 0 ? d->m_height : d->m_width;
+        d->m_widget->showObj(hUnion);
 
-    CError err = d->m_pam->testPos(position, d->m_img, resObj, index, ui->spin_thre->value(),
-                                ui->cmb_direction->currentIndex());
+    }  catch (...) {
+        SENDERR("detect crashed!");
+    }
+}
 
+
+void CGetCuStrapPosWidget::on_btn_getMidRegion_clicked()
+{
+    HObject midRegion;
+    CError err = d->m_pam->getMidRect(d->m_region, midRegion, ui->cmb_direction->currentIndex());
     if(err.isWrong())
         SENDERR(err.msg());
 
-    d->m_widget->showObj(resObj);
+    d->m_widget->showObj(midRegion);
+}
+
+
+void CGetCuStrapPosWidget::on_btn_getCuPos_clicked()
+{
+    HObject midRegion, cuRegion;
+    CError err = d->m_pam->getMidRect(d->m_region, midRegion, ui->cmb_direction->currentIndex());
+    if(err.isWrong())
+        SENDERR(err.msg());
+
+    int cuPos;
+    err = d->m_pam->getCuPos(d->m_region, midRegion, cuRegion, cuPos, ui->spin_minthre->value(),ui->cmb_direction->currentIndex());
+    if(err.isWrong())
+        SENDERR(err.msg());
+
+    d->m_widget->showObj(cuRegion);
+    ui->cmb_cuPos->setCurrentIndex(cuPos);
 }
 
 }
 
+
+void CSHDetect::CGetCuStrapPosWidget::on_btn_pamRead_clicked()
+{
+    d->m_pam->pamRead("D:\\work\\detect\\detection\\bin\\conf\\algorithm\\cshdefault\\detection.xml");
+}

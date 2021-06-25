@@ -307,8 +307,8 @@ void CGetRegionsWidget::on_btn_blue_clicked()
 
 void CGetRegionsWidget::on_btn_Tape_clicked()
 {
-    err = d->pam->getTapeRegion(d->channelImgs[RGBR], d->regions.WhiteRegion, d->regions.TapeRegion,
-                                ui->spin_tapeholeSize->value(), ui->dspin_slctRange->value());
+    err = d->pam->getTapeRegion(d->regions, ui->dspin_guassSigma->value(), ui->dspin_guassFactor->value(),
+                                ui->spin_threMax->value(), ui->spin_holeSize->value());
     CHECKRES(err);
 
     int i = ui->tabWidget->currentIndex();

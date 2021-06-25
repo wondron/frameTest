@@ -7,38 +7,46 @@
 #include <QPair>
 #include <QMap>
 
+#ifndef HOBJ
+#define HOBJ  HalconCpp::HObject
+#endif
+
 struct RegionS{
     int width;
     int height;
+    int TapeNum;
 
-    HalconCpp::HObject m_oriImg;
-    HalconCpp::HObject m_RImg;
-    HalconCpp::HObject m_GImg;
-    HalconCpp::HObject m_BImg;
-    HalconCpp::HObject m_hsvHImg;
-    HalconCpp::HObject m_hsvSImg;
-    HalconCpp::HObject m_hsvVImg;
+    HOBJ m_oriImg;
+    HOBJ m_RImg;
+    HOBJ m_GImg;
+    HOBJ m_BImg;
+    HOBJ m_hsvHImg;
+    HOBJ m_hsvSImg;
+    HOBJ m_hsvVImg;
 
-    HalconCpp::HObject BlackBangRegion;
-    HalconCpp::HObject DarkRegion;
-    HalconCpp::HObject WhiteRegion;
-    HalconCpp::HObject HSVRoi;
-    HalconCpp::HObject DeepRedRegion;
-    HalconCpp::HObject BlueRegion;
-    HalconCpp::HObject WeldRoi;
-    HalconCpp::HObject TapeRegion;
+    HOBJ BlackBangRegion;
+    HOBJ DarkRegion;
+    HOBJ WhiteRegion;
+    HOBJ HSVRoi;
+    HOBJ DeepRedRegion;
+    HOBJ BlueRegion;
+    HOBJ WeldRoi;
+    HOBJ TapeRegion;
 };
 
 struct ReverRegionS{
     int width;
     int height;
+    int batDire;
 
-    HalconCpp::HObject m_oriImg;
+    HOBJ m_oriImg;
 
-    HalconCpp::HObject batteryRegion;
-    HalconCpp::HObject midRegion;
-    HalconCpp::HObject blueTapesReg;
-    HalconCpp::HObject dblTapeReg;
+    HOBJ batteryRegion;
+    HOBJ midRegion;
+    HOBJ blueTapesReg;
+    HOBJ dblTapeReg;
+
+    HOBJ hanregion;
 };
 
 struct CircleInfo{
@@ -53,10 +61,32 @@ struct LineInfo{
     double pX;
     double pY;
     double distance;
+    double angle;    // 角度制
     HalconCpp::HTuple startRow;
     HalconCpp::HTuple startCol;
     HalconCpp::HTuple endRow;
     HalconCpp::HTuple endCol;
+};
+
+struct RectInfo
+{
+    int XBia;
+    int YBia;
+
+    int len1;
+    int len2;
+    int row;
+    int col;
+    double phi = 0;
+};
+
+struct MeasureposPam{
+    int recLen1;
+    int recLen2;
+    int transition = 0;
+    int pntSelect = 0;
+    double sigma = 1;
+    int threshold = 20;
 };
 
 struct DetectRectInfo_t {

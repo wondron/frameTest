@@ -11,12 +11,8 @@ public:
     CGetTapeAnglePrivate() {}
     ~CGetTapeAnglePrivate() {}
 
-    //总体
-    int tapeNum = 4;
-
-    VLineData vLine;
-    HLineData upLine;
-    HLineData dnLine;
+    QList<PosBia> m_posPams;
+    QList<MeasureposPam> m_measurePams;
 };
 
 CGetTapeAngle::CGetTapeAngle():
@@ -28,64 +24,123 @@ CGetTapeAngle::CGetTapeAngle():
 CError CGetTapeAngle::detect(const HObject& dst, const ReverRegionS& res, QList<QLine>& gdLine, QList<QLine>& ngLine)
 {
     CError err;
-    QList<QLine> lines;
-    QString errInfo;
-    HObject slctReg, tapeReg, hConnect;
-    tapeReg = res.blueTapesReg;
+    CError errTotal(ANGLE, "tape angle failed");
+    int errTime = 0;
 
-    err = checkTapeNum(tapeReg, hConnect, d->tapeNum);
-    CHECKERR(err);
+    for(int i = 0; i < 4; i++){
+        LineInfo lineInfo;
+        err = getSignalLines(dst, res.hanregion, lineInfo, i, d->m_posPams[i], d->m_measurePams[i]);
 
-    int allCrashtime = 0;
-    for (int quadrant = 0; quadrant < 4; quadrant++) {
-        err = getSignalLines(dst, hConnect, lines, quadrant, d->upLine, d->dnLine, d->vLine);
-        if (err.code() == NG) {
-            errInfo = QString("quadrant: %1, angle out of STD");
-            ngLine.append(lines);
-        } else if (!err.isWrong())
-            gdLine.append(lines);
-        else {
-            errInfo = QString("quadrant: %1, all Detect crashed!");
-            allCrashtime ++;
-        }
-        lines.clear();
+        if(err.isWrong())
+            errTime++;
+
+        if(err.code() == ANGLE)
+            ngLine.push_back(QLine(lineInfo.startCol.D(), lineInfo.startRow.D(), lineInfo.endCol.D(), lineInfo.endRow.D()));
+
+        if(!err.isWrong())
+            gdLine.push_back(QLine(lineInfo.startCol.D(), lineInfo.startRow.D(), lineInfo.endCol.D(), lineInfo.endRow.D()));
     }
+    if(errTime == 0)
+        errTotal = 0;
 
-    if (allCrashtime || ngLine.size())
-        return CError(NG, errInfo);
-
-    return 0;
+    return errTotal;
 }
 
 CError CGetTapeAngle::pamRead(const char* xmlfilePath)
 {
     XmlRead xmlRead;
 
+    d->m_posPams.clear();
+    d->m_measurePams.clear();
+    PosBia bia;
+    MeasureposPam pam;
+
     try {
         std::map<std::string, xmlInfo> res = xmlRead.parseXML(xmlfilePath, taskName.toLocal8Bit().data());
+        READPAM(bia.XBia,       "XBia1", res);
+        READPAM(bia.YBia,       "YBia1", res);
+        READPAM(bia.lineDirect, "lineDirect1", res);
+        READPAM(bia.lineWidth,  "lineWidth1", res);
+        READPAM(bia.detectTime, "detectTime1", res);
+        READPAM(bia.angleDown,  "angleDown1", res);
+        READPAM(bia.angleUp,    "angleUp1", res);
+        d->m_posPams.push_back(bia);
+        READPAM(pam.recLen1,    "recLen11", res);
+        READPAM(pam.recLen2,    "recLen21", res);
+        READPAM(pam.transition, "transition1", res);
+        READPAM(pam.pntSelect,  "pntSelect1", res);
+        READPAM(pam.sigma,      "sigma1", res);
+        READPAM(pam.threshold,  "threshold1", res);
+        d->m_measurePams.push_back(pam);
 
-        READPAM(d->tapeNum,            "tapeNum",           res);
+        READPAM(bia.XBia,       "XBia2", res);
+        READPAM(bia.YBia,       "YBia2", res);
+        READPAM(bia.lineDirect, "lineDirect2", res);
+        READPAM(bia.lineWidth,  "lineWidth2", res);
+        READPAM(bia.detectTime, "detectTime2", res);
+        READPAM(bia.angleDown,  "angleDown2", res);
+        READPAM(bia.angleUp,    "angleUp2", res);
+        d->m_posPams.push_back(bia);
+        READPAM(pam.recLen1,    "recLen12", res);
+        READPAM(pam.recLen2,    "recLen22", res);
+        READPAM(pam.transition, "transition2", res);
+        READPAM(pam.pntSelect,  "pntSelect2", res);
+        READPAM(pam.sigma,      "sigma2", res);
+        READPAM(pam.threshold,  "threshold2", res);
+        d->m_measurePams.push_back(pam);
 
-        READPAM(d->vLine.angleDown,    "vLineangleDown",    res);
-        READPAM(d->vLine.angleUp,      "vLineangleUp",      res);
-        READPAM(d->vLine.dilaWid,      "vLinedilaWid",      res);
-        READPAM(d->vLine.eroHigh,      "vLineeroHigh",      res);
-        READPAM(d->vLine.minConLen,    "vLineminConLen",    res);
-        READPAM(d->vLine.threSubValue, "vLinethreSubValue", res);
+        READPAM(bia.XBia,       "XBia3", res);
+        READPAM(bia.YBia,       "YBia3", res);
+        READPAM(bia.lineDirect, "lineDirect3", res);
+        READPAM(bia.lineWidth,  "lineWidth3", res);
+        READPAM(bia.detectTime, "detectTime3", res);
+        READPAM(bia.angleDown,  "angleDown3", res);
+        READPAM(bia.angleUp,    "angleUp3", res);
+        d->m_posPams.push_back(bia);
+        READPAM(pam.recLen1,    "recLen13", res);
+        READPAM(pam.recLen2,    "recLen23", res);
+        READPAM(pam.transition, "transition3", res);
+        READPAM(pam.pntSelect,  "pntSelect3", res);
+        READPAM(pam.sigma,      "sigma3", res);
+        READPAM(pam.threshold,  "threshold3", res);
+        d->m_measurePams.push_back(pam);
 
-        READPAM(d->upLine.angleDown,   "upLineangleDown",   res);
-        READPAM(d->upLine.angleUp,     "upLineangleUp",     res);
-        READPAM(d->upLine.selectRatio, "upLineselectRatio", res);
-        READPAM(d->upLine.subThreVal,  "upLinesubThreVal",  res);
-        READPAM(d->upLine.xExpand,     "upLinexExpand",     res);
-        READPAM(d->upLine.yExpand,     "upLineyExpand",     res);
+        READPAM(bia.XBia,       "XBia4", res);
+        READPAM(bia.YBia,       "YBia4", res);
+        READPAM(bia.lineDirect, "lineDirect4", res);
+        READPAM(bia.lineWidth,  "lineWidth4", res);
+        READPAM(bia.detectTime, "detectTime4", res);
+        READPAM(bia.angleDown,  "angleDown4", res);
+        READPAM(bia.angleUp,    "angleUp4", res);
+        d->m_posPams.push_back(bia);
+        READPAM(pam.recLen1,    "recLen14", res);
+        READPAM(pam.recLen2,    "recLen24", res);
+        READPAM(pam.transition, "transition4", res);
+        READPAM(pam.pntSelect,  "pntSelect4", res);
+        READPAM(pam.sigma,      "sigma4", res);
+        READPAM(pam.threshold,  "threshold4", res);
+        d->m_measurePams.push_back(pam);
 
-        READPAM(d->dnLine.angleDown,   "dnLineangleDown",   res);
-        READPAM(d->dnLine.angleUp,     "dnLineangleUp",     res);
-        READPAM(d->dnLine.selectRatio, "dnLineselectRatio", res);
-        READPAM(d->dnLine.subThreVal,  "dnLinesubThreVal",  res);
-        READPAM(d->dnLine.xExpand,     "dnLinexExpand",     res);
-        READPAM(d->dnLine.yExpand,     "dnLineyExpand",     res);
+
+//        for(int i = 0; i < 4; i++){
+
+//            qDebug() << "biaPam:"
+//                     << d->m_posPams[i].XBia
+//                     << d->m_posPams[i].YBia
+//                     << d->m_posPams[i].lineDirect
+//                     << d->m_posPams[i].lineWidth
+//                     << d->m_posPams[i].detectTime
+//                     << d->m_posPams[i].angleDown
+//                     << d->m_posPams[i].angleUp;
+
+//            qDebug() << "measurePam:"
+//                     << d->m_measurePams[i].recLen1
+//                     << d->m_measurePams[i].recLen2
+//                     << d->m_measurePams[i].transition
+//                     << d->m_measurePams[i].pntSelect
+//                     << d->m_measurePams[i].sigma
+//                     << d->m_measurePams[i].threshold;
+//        }
 
         return 0;
 
@@ -94,237 +149,51 @@ CError CGetTapeAngle::pamRead(const char* xmlfilePath)
     }
 }
 
-void CGetTapeAngle::setUpPam(const HLineData& pam)
+void CGetTapeAngle::getPamValue(QList<MeasureposPam> &pam, QList<PosBia> &bia)
 {
-    d->upLine = pam;
+    pam = d->m_measurePams;
+    bia = d->m_posPams;
 }
 
-void CGetTapeAngle::setDownPam(const HLineData& pam)
-{
-    d->dnLine = pam;
-}
-
-void CGetTapeAngle::setVPam(const VLineData& pam)
-{
-    d->vLine = pam;
-}
-
-CError CGetTapeAngle::checkTapeNum(const HObject& tapeReg, HObject& connectReg, const int num)
+CError CGetTapeAngle::getSignalLines(const HObject& dst, const HObject& hConnect, LineInfo& lines, const int quadrant, const PosBia biaInfo, const MeasureposPam pam)
 {
     try {
-        CHECKEMPIMG(tapeReg, "CGetTapeAngle::checkTapeNum tapeReg is empty");
+        CError err;
 
-        HTuple area, row, col;
-        Connection(tapeReg, &connectReg);
-        AreaCenter(connectReg, &area, &row, &col);
+        HObject sigHanReg, showLine;
+        HTuple  Row, Column, Area;
 
-        if (row.Length() != num)
-            CError(REGIONNUM, QString("CGetTapeAngle::slctRegion region size is not %1").arg(d->tapeNum));
+        if(biaInfo.detectTime < 3)
+            return CError(PAMVALUE, QString("CGetTapeAngle::getSignalLines biaInfo.detectTime should > 3, value:%1").arg(biaInfo.detectTime));
 
-        return 0;
+        err = Algorithm::getRegionByQuadrant(hConnect, sigHanReg, quadrant);
+        CHECKERR(err);
+        AreaCenter(sigHanReg, &Area, &Row, &Column);
 
-    } catch (...) {
-        return CError(PAMREAD, "CGetTapeAngle::checkTapeNum crash!");
-    }
-}
+        LineInfo dtctLine;
 
-CError CGetTapeAngle::slctRegion(const HObject& hConnect, HObject& region, int quadrant)
-{
-    try {
-        CHECKEMPIMG(hConnect, "CGetTapeAngle::slctRegion hConnect is empty");
-
-        HTuple area, row, col, rowMean, colMean;
-        AreaCenter(hConnect, &area, &row, &col);
-
-        TupleMean(col, &colMean);
-        TupleMean(row, &rowMean);
-
-        int row1 = 0;
-        int row2 = 99999;
-        int col1 = 0;
-        int col2 = 99999;
-        int midRow = rowMean.D();
-        int midCol = colMean.D();
-
-        switch (quadrant) {
-        case 0:
-            row2 = midRow;
-            col1 = midCol;
-            break;
-        case 1:
-            row2 = midRow;
-            col2 = midCol;
-            break;
-        case 2:
-            row1 = midRow;
-            col2 = midCol;
-            break;
-        case 3:
-            row1 = midRow;
-            col1 = midCol;
-            break;
-        default:
-            break;
+        if (biaInfo.lineDirect == 1) {
+            dtctLine.startRow = biaInfo.YBia + Row.D();
+            dtctLine.startCol = biaInfo.XBia + Column.D() - biaInfo.lineWidth / 2;
+            dtctLine.endRow   = biaInfo.YBia + Row.D();
+            dtctLine.endCol   = biaInfo.XBia + Column.D() + biaInfo.lineWidth / 2;
+        } else {
+            dtctLine.startRow = biaInfo.YBia + Row.D() - biaInfo.lineWidth / 2;
+            dtctLine.startCol = biaInfo.XBia + Column.D();
+            dtctLine.endRow   = biaInfo.YBia + Row.D() + biaInfo.lineWidth / 2;
+            dtctLine.endCol   = biaInfo.XBia + Column.D();
         }
 
-        SelectShape(hConnect, &region, (HTuple("row").Append("column")),
-                    "and", (HTuple(row1).Append(col1)), (HTuple(row2).Append(col2)));
-
-        AreaCenter(region, &area, &row, &col);
-
-        if (area.Length() != 1)
-            return CError(REGIONNUM, QString("CGetTapeAngle::slctRegion slected is not 1: %1").arg(area.Length()));
-
-        return 0;
-    } catch (...) {
-        return CError(UNEXCEPTION, "CGetTapeAngle::slctRegion crashed!");
-    }
-}
-
-CError CGetTapeAngle::getSignalLines(const HObject& dst, const HObject& hConnect, QList<QLine>& lines, int quadrant,
-                                     HLineData& upPam, HLineData& dnPam, VLineData& vPam)
-{
-    try {
-        CHECKEMPIMG(dst, "getSignalLines::dst is empty");
-
-        CError err;
-        CError totalErr(NG, QString("quadrant: %1, all Line out of range").arg(quadrant));
-
-        QLine line;
-        HObject sigTapeReg;
-        int crashTime = 0;
-        HTuple  Row1, Column1, Row2, Column2;
-        lines.clear();
-
-        err = slctRegion(hConnect, sigTapeReg, quadrant);
+        err = Algorithm::edgeLineDtct(dst, showLine, lines, biaInfo.lineDirect, biaInfo.detectTime, dtctLine, pam);
         CHECKERR(err);
 
-        SmallestRectangle1(sigTapeReg, &Row1, &Column1, &Row2, &Column2);
-        QLine upLine(Column1.D(), Row1.D(), Column2.D(), Row1.D());
-        QLine dnLine(Column1.D(), Row2.D(), Column2.D(), Row2.D());
+        if (lines.angle < biaInfo.angleDown || lines.angle > biaInfo.angleUp)
+            err = CError(ANGLE, QString("angle is out of range ,value:%1").arg(lines.angle));
 
-        line = QLine(0, 0, 0, 0);
-        err = getHline(dst, sigTapeReg, line, upLine, upPam);//求上边
-
-        if (!err.isWrong())
-            totalErr = 0;
-
-        if (err.isWrong() && (err.code() != NG))
-            crashTime ++;
-        lines.push_back(line);
-
-        line = QLine(0, 0, 0, 0);
-        err = getHline(dst, sigTapeReg, line, dnLine, dnPam);//求下边
-
-        if (!err.isWrong())
-            totalErr = 0;
-
-        if (err.isWrong() && (err.code() != NG))
-            crashTime ++;
-        lines.push_back(line);
-
-        line = QLine(0, 0, 0, 0);
-        err = getVline(dst, sigTapeReg, line, vPam); //求竖边
-
-        if (!err.isWrong())
-            totalErr = 0;
-
-        if (err.isWrong() && (err.code() != NG))
-            crashTime ++;
-        lines.push_back(line);
-
-        if (crashTime > 2)
-            totalErr = CError(UNEXCEPTION, QString("quadrant: %1, all Line detect crashed").arg(quadrant));
-
-        return totalErr;
+        return err;
     } catch (...) {
         return CError(UNEXCEPTION, "CGetTapeAngle::getSignalLines crashed!");
     }
 }
-
-CError CGetTapeAngle::getHline(const HObject& dst, const HObject& sigTapeReg, QLine& line,
-                               const QLine pos, HLineData& pam)
-{
-    try {
-        CHECKEMPIMG(dst, "getSignalLines::dst is empty");
-        CHECKEMPIMG(sigTapeReg, "getSignalLines::doubleTapeRoi is empty");
-
-        HObject  hRect, hReduce, hLine;
-        HObject  Border, ContoursSplit, hSlctXld;
-        HTuple  RowBegin, ColBegin, RowEnd, ColEnd, Nr, Nc, Dist;
-
-        //求上边
-        int y1 = pos.y1() - pam.yExpand;
-        int x1 = pos.x1() - pam.xExpand;
-        int y2 = pos.y2() + pam.yExpand;
-        int x2 = pos.x2() + pam.xExpand;
-        int width = std::abs(x1 - x2);
-
-        GenRectangle1(&hRect, y1, x1, y2, x2);
-
-        ReduceDomain(dst, hRect, &hReduce);
-        ThresholdSubPix(hReduce, &Border, pam.subThreVal);
-        SegmentContoursXld(Border, &ContoursSplit, "lines", 5, 4, 2);
-        SelectContoursXld(ContoursSplit, &hSlctXld, "contour_length",
-                          width * pam.selectRatio, 200, -0.5, 0.5);
-        CHECKEMPIMG(hSlctXld, "getHline::hSlctXld is empty");
-
-        FitLineContourXld(hSlctXld, "tukey", -1, 0, 5, 2,
-                          &RowBegin, &ColBegin, &RowEnd, &ColEnd, &Nr, &Nc, &Dist);
-        GenRegionLine(&hLine, RowBegin, ColBegin, RowEnd, ColEnd);
-        line = QLine(ColBegin.D(), RowBegin.D(), ColEnd.D(), RowEnd.D());
-
-        float angTan = (RowEnd - RowBegin) / (ColEnd - ColBegin);
-        float angle = std::atan(angTan);
-        pam.angle = angle;
-
-        if (angle < pam.angleDown || angle > pam.angleUp)
-            return CError(NG, "CGetTapeAngle::getHline get the angle out of STD");
-
-        return 0;
-
-    } catch (...) {
-        return CError(UNEXCEPTION, "CGetTapeAngle::getSignalLines crashed!");
-    }
-}
-
-CError CGetTapeAngle::getVline(const HObject& dst, const HObject& sigTapeReg, QLine& line, VLineData& pam)
-{
-    try {
-        CHECKEMPIMG(dst, "CGetTapeAngle::getVline::dst is empty");
-        CHECKEMPIMG(sigTapeReg, "CGetTapeAngle::getVline::sigTapeReg is empty");
-        CHECKTHREVALUE(pam.threSubValue, "threSubvalue out of range");
-
-        HObject hRect, hDilaReg, hEroReg, hReduce;
-        HObject xldBorder, xldSlct, hLine;
-        HTuple  RowBegin, ColBegin, RowEnd, ColEnd, Nr, Nc, Dist;
-
-        GenRectangle1(&hRect, 0, 0, 0, pam.dilaWid);
-        Dilation1(sigTapeReg, hRect, &hDilaReg, 1);
-        GenRectangle1(&hRect, 0, 0, pam.eroHigh, 0);
-        Erosion1(hDilaReg, hRect, &hEroReg, 1);
-        ReduceDomain(dst, hEroReg, &hReduce);
-        ThresholdSubPix(hReduce, &xldBorder, pam.threSubValue);
-        SelectContoursXld(xldBorder, &xldSlct, "contour_length", pam.minConLen, 20000, -0.5, 0.5);
-        CHECKEMPIMG(xldSlct, "CGetTapeAngle::getVline::xldSlct is empty");
-
-        FitLineContourXld(xldSlct, "tukey", -1, 0, 5, 2, &RowBegin, &ColBegin,
-                          &RowEnd, &ColEnd, &Nr, &Nc, &Dist);
-        GenRegionLine(&hLine, RowBegin, ColBegin, RowEnd, ColEnd);
-        line = QLine(ColBegin.D(), RowBegin.D(), ColEnd.D(), RowEnd.D());
-
-        float angTan = (RowEnd.D() - RowBegin.D()) / (ColEnd.D() - ColBegin.D());
-        float angle = abs(std::atan(angTan));
-        pam.angle = angle;
-
-        if (angle < pam.angleDown || angle > pam.angleUp)
-            return CError(NG, "CGetTapeAngle::getVline get the angle out of STD");
-
-        return 0;
-    }  catch (...) {
-        return CError(UNEXCEPTION, "CGetTapeAngle::getVline crashed!");
-    }
-}
-
 
 }

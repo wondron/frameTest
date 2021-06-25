@@ -5,6 +5,8 @@
 #include "commonUsage/algorithm.h"
 #include "commonUsage/commonDef.h"
 #include "qdebug.h"
+#include "cgettapeanglepam.h"
+#include "qgroupbox.h"
 
 #define SENDERR(a) \
     {QMessageBox::warning(this, "warnning", a);\
@@ -19,13 +21,28 @@ public:
     {
         m_widget = new Graphics::halconWidget();
         m_pam = new CGetTapeAngle();
+
+        pamWidgetList.clear();
+        measureList.clear();
+        biaList.clear();
+
+        for(int i = 0; i < 4; i++){
+            CGetTapeAnglePam* widget = new CGetTapeAnglePam();
+            pamWidgetList.push_back(widget);
+        }
+
     }
 
+public:
     Graphics::halconWidget* m_widget;
     ReverRegionS m_region;
     CGetTapeAngle* m_pam;
-
+    QList<CGetTapeAnglePam*> pamWidgetList;
+    QList<QGroupBox*> grpbxList;
     HObject slctReg;
+
+    QList<MeasureposPam> measureList;
+    QList<PosBia> biaList;
 
     bool isSetRegion = false;
 
@@ -37,7 +54,10 @@ CGetTapeAngleWidget::CGetTapeAngleWidget(QWidget* parent) :
     d(new CGetTapeAngleWidgetPrivate())
 {
     ui->setupUi(this);
-    ui->vlay_widget->addWidget(d->m_widget);
+    initialWidget();
+
+    for(auto i : d->pamWidgetList)
+        connect(i, SIGNAL(pamChanged()), this, SLOT(getPam()));
 }
 
 CGetTapeAngleWidget::~CGetTapeAngleWidget()
@@ -47,9 +67,9 @@ CGetTapeAngleWidget::~CGetTapeAngleWidget()
 
 void CGetTapeAngleWidget::setRegions(const ReverRegionS& region)
 {
-    CError err = Algorithm::objIsEmpty(region.dblTapeReg);
+    CError err = Algorithm::objIsEmpty(region.batteryRegion);
     if (err.isWrong())
-        SENDERR("input regiono is empty");
+        SENDERR("CGetTapeAngleWidget::setRegions input regiono is empty");
 
     d->m_region = region;
     d->isSetRegion = true;
@@ -61,222 +81,110 @@ void CGetTapeAngleWidget::setPam(CGetTapeAngle* pam)
     d->m_pam = pam;
 }
 
-HLineData CGetTapeAngleWidget::getUpPam()
+CError CGetTapeAngleWidget::detect()
 {
-    HLineData upPam;
-    upPam.angleDown = ui->dspin_tAngleDown->value();
-    upPam.angleUp = ui->dspin_tAngleUp->value();
-    upPam.selectRatio = ui->dspin_tSelectRatio->value();
-    upPam.xExpand = ui->spin_tXexpan->value();
-    upPam.yExpand = ui->spin_tYexpan->value();
-    upPam.subThreVal = ui->spin_tSubThreVal->value();
-    return upPam;
-}
+    d->m_pam->pamRead("D:\\work\\detect\\detection\\bin\\conf\\algorithm\\cshdefault\\detection.xml");
+    QList<QLine> gdLine, ngLine;
+    CError err = d->m_pam->detect(d->m_region.m_oriImg, d->m_region, gdLine, ngLine);
 
-HLineData CGetTapeAngleWidget::getDnPam()
-{
-    HLineData downPam;
-    downPam.angleDown = ui->dspin_bAngleDown->value();
-    downPam.angleUp = ui->dspin_bAngleUp->value();
-    downPam.selectRatio = ui->dspin_bSelectRatio->value();
-    downPam.xExpand = ui->spin_bXexpan->value();
-    downPam.yExpand = ui->spin_bYexpan->value();
-    downPam.subThreVal = ui->spin_bSubThreVal->value();
-    return  downPam;
-}
+    HObject lines, line;
+    GenEmptyRegion(&lines);
+    GenEmptyRegion(&line);
 
-VLineData CGetTapeAngleWidget::getVPam()
-{
-    VLineData vPam;
-    vPam.angleDown = ui->dspin_angDown->value();
-    vPam.angleUp = ui->dspin_angleUp->value();
-    vPam.dilaWid = ui->spin_dilaWid->value();
-    vPam.eroHigh = ui->spin_eroHigh->value();
-    vPam.minConLen = ui->spin_minConLen->value();
-    vPam.threSubValue = ui->spin_threSubValue->value();
-    return vPam;
-}
-
-}
-
-void CSHDetect::CGetTapeAngleWidget::on_pushButton_clicked()
-{
     try {
-        CError err = Algorithm::objIsEmpty(d->m_region.blueTapesReg);
-        if (err.isWrong())
-            SENDERR("mregion.bluTapes is empty");
+        for(auto i : gdLine){
+            GenRegionLine(&line, i.y1(), i.x1(), i.y2(), i.x2());
+            Union2(line, lines, &lines);
+        }
 
-        HObject hConnect, res;
-        Connection(d->m_region.blueTapesReg, &hConnect);
-        d->m_pam->slctRegion(hConnect, res, ui->cmbx_quadrant->currentIndex());
+        for(auto i : ngLine){
+            GenRegionLine(&line, i.y1(), i.x1(), i.y2(), i.x2());
+            Union2(line, lines, &lines);
+        }
 
-        err = Algorithm::objIsEmpty(res);
-        if (err.isWrong())
-            return;
-
-        d->m_widget->showObj(res);
-        d->slctReg = res;
+        d->m_widget->showObj(lines);
     }  catch (...) {
-        SENDERR("select quadrant crashed!");
+        QMessageBox::warning(this, "warnning", "CGetTapeAngleWidget::detect crashed!");
+        return 1;
     }
+
+    return err;
+}
+
+void CGetTapeAngleWidget::initialWidget()
+{
+    ui->vlay_widget->addWidget(d->m_widget);
+    ui->lay_1->addWidget(d->pamWidgetList[0]);
+    ui->lay_2->addWidget(d->pamWidgetList[1]);
+    ui->lay_3->addWidget(d->pamWidgetList[2]);
+    ui->lay_4->addWidget(d->pamWidgetList[3]);
+
+    d->grpbxList.push_back(ui->grpbx_1);
+    d->grpbxList.push_back(ui->grpbx_2);
+    d->grpbxList.push_back(ui->grpbx_3);
+    d->grpbxList.push_back(ui->grpbx_4);
+
+    for(int i = 1; i < 4; i++){
+        d->grpbxList[i]->setVisible(false);
+    }
+}
+
+void CGetTapeAngleWidget::on_cmbx_quadrant_currentIndexChanged(int index)
+{
+    for(int i = 0; i < 4; i++){
+        bool visual = (index == i);
+        d->grpbxList[i]->setVisible(visual);
+    }
+
+}
+
+void CGetTapeAngleWidget::getPam()
+{
+    d->measureList.clear();
+    d->biaList.clear();
+
+    for(auto i : d->pamWidgetList){
+        MeasureposPam pam;
+        PosBia bia;
+
+        i->getPamValue(pam, bia);
+        d->measureList.push_back(pam);
+        d->biaList.push_back(bia);
+    }
+}
+
+
+void CGetTapeAngleWidget::on_btn_pamRead_clicked()
+{
+  d->m_pam->pamRead("D:\\work\\detect\\detection\\bin\\conf\\algorithm\\cshdefault\\detection.xml");
+
+  d->m_pam->getPamValue(d->measureList, d->biaList);
+
+  for(int i = 0; i < 4; i++){
+      d->pamWidgetList[i]->setPamValue(d->measureList[i], d->biaList[i]);
+  }
+}
+
 }
 
 void CSHDetect::CGetTapeAngleWidget::on_btn_singleDetct_clicked()
 {
     try {
-        CError err = Algorithm::objIsEmpty(d->m_region.blueTapesReg);
+
+        CError err = Algorithm::objIsEmpty(d->m_region.hanregion);
         if (err.isWrong())
-            SENDERR("mregion.bluTapes is empty");
+            SENDERR("mregion.hanregion is empty");
 
-        HObject hConnect, res, hLines;
-        Connection(d->m_region.blueTapesReg, &hConnect);
-        d->m_pam->slctRegion(hConnect, res, ui->cmbx_quadrant->currentIndex());
+        LineInfo line;
+        getPam();
 
-        HTuple  Row1, Column1, Row2, Column2;
-        SmallestRectangle1(res, &Row1, &Column1, &Row2, &Column2);
+        int index = ui->cmbx_quadrant->currentIndex();
+        err = d->m_pam->getSignalLines(d->m_region.m_oriImg, d->m_region.hanregion, line, index, d->biaList[index], d->measureList[index]);
+        if(err.isWrong()) SENDERR(err.msg());
 
-        HObject rect;
-        GenRectangle1(&rect, Row1, Column1, Row2, Column2);
-        d->m_widget->showObj(rect);
-
-        GenEmptyObj(&hLines);
-        HLineData upPam = getUpPam();
-        HLineData downPam = getDnPam();
-        VLineData vPam = getVPam();
-
-        QList<QLine> lineList;
-        d->m_pam->getSignalLines(d->m_region.m_oriImg, hConnect, lineList, ui->cmbx_quadrant->currentIndex(), upPam, downPam, vPam);
-
-        HTuple showMsg;
-        for (auto line : lineList) {
-            GenRegionLine(&rect, line.y1(), line.x1(), line.y2(), line.x2());
-            Union2(hLines, rect, &hLines);
-        }
-
-        QList<QString> stt;
-        stt.push_back(QString("tangle:%1").arg(upPam.angle));
-        stt.push_back(QString("bangle:%1").arg(downPam.angle));
-        stt.push_back(QString("vangle:%1").arg(vPam.angle));
-
-        d->m_widget->showObj(hLines);
-        d->m_widget->setFont("Times New Roman", 25, false, false);
-        d->m_widget->showMsg(stt, QPoint(50, 100));
-    }  catch (...) {
-        SENDERR("singleDetct crashed!");
-    }
-}
-
-void CSHDetect::CGetTapeAngleWidget::on_btn_vDetect_clicked()
-{
-    CError err = Algorithm::objIsEmpty(d->m_region.blueTapesReg);
-    if (err.isWrong())
-        SENDERR("mregion.bluTapes is empty");
-
-    HObject hConnect, res, hLine;
-    Connection(d->m_region.blueTapesReg, &hConnect);
-    d->m_pam->slctRegion(hConnect, res, ui->cmbx_quadrant->currentIndex());
-
-    err = Algorithm::objIsEmpty(res);
-    if (err.isWrong())
-        SENDERR("slected region is empty");
-
-    HTuple  Row1, Column1, Row2, Column2;
-    SmallestRectangle1(res, &Row1, &Column1, &Row2, &Column2);
-
-    QLine line;
-    VLineData vPam = getVPam();
-    err = d->m_pam->getVline(d->m_region.m_oriImg, res, line, vPam);
-    if (err.isWrong())
-        QMessageBox::warning(this, "warning", err.msg());
-
-    if ((err.code() == NG) || (!err.isWrong())) {
-        GenRegionLine(&hLine, line.y1(), line.x1(), line.y2(), line.x2());
-        d->m_widget->showObj(hLine);
-        d->m_widget->showMsg(QString("Angle:%1").arg(vPam.angle));
-    }
-}
-
-void CSHDetect::CGetTapeAngleWidget::on_btn_upDetect_clicked()
-{
-    try {
-        CError err = Algorithm::objIsEmpty(d->m_region.blueTapesReg);
-        if (err.isWrong())
-            SENDERR("mregion.bluTapes is empty");
-
-        HObject hConnect, res, hLines;
-        Connection(d->m_region.blueTapesReg, &hConnect);
-        d->m_pam->slctRegion(hConnect, res, ui->cmbx_quadrant->currentIndex());
-
-        err = Algorithm::objIsEmpty(res);
-        if (err.isWrong())
-            SENDERR("slected region is empty");
-
-        HTuple  Row1, Column1, Row2, Column2;
-        SmallestRectangle1(res, &Row1, &Column1, &Row2, &Column2);
-
-        HObject rect, hLine;
-        GenRectangle1(&rect, Row1, Column1, Row2, Column2);
-        d->m_widget->showObj(rect);
-
-        QLine upLine(Column1.D(), Row1.D(), Column2.D(), Row1.D());
-        QLine line = QLine(0, 0, 0, 0);
-
-        GenEmptyObj(&hLines);
-        HLineData upPam = getUpPam();
-        err = d->m_pam->getHline(d->m_region.m_oriImg, res, line, upLine, upPam);
-
-        if (err.isWrong())
-            QMessageBox::warning(this, "warning", err.msg());
-
-        if ((err.code() == NG) || (!err.isWrong())) {
-            GenRegionLine(&hLine, line.y1(), line.x1(), line.y2(), line.x2());
-            d->m_widget->showObj(hLine);
-            d->m_widget->showMsg(QString("Angle:%1").arg(upPam.angle));
-        }
-
-    }  catch (...) {
-        SENDERR("singleDetct crashed!");
-    }
-}
-
-void CSHDetect::CGetTapeAngleWidget::on_btn_doenDetect_clicked()
-{
-    try {
-        CError err = Algorithm::objIsEmpty(d->m_region.blueTapesReg);
-        if (err.isWrong())
-            SENDERR("mregion.bluTapes is empty");
-
-        HObject hConnect, res, hLines;
-        Connection(d->m_region.blueTapesReg, &hConnect);
-        d->m_pam->slctRegion(hConnect, res, ui->cmbx_quadrant->currentIndex());
-
-        err = Algorithm::objIsEmpty(res);
-        if (err.isWrong())
-            SENDERR("slected region is empty");
-
-        HTuple  Row1, Column1, Row2, Column2;
-        SmallestRectangle1(res, &Row1, &Column1, &Row2, &Column2);
-
-        HObject rect, hLine;
-        GenRectangle1(&rect, Row1, Column1, Row2, Column2);
-        d->m_widget->showObj(rect);
-
-        QLine dnLine(Column1.D(), Row2.D(), Column2.D(), Row2.D());
-        QLine line = QLine(0, 0, 0, 0);
-
-        GenEmptyObj(&hLines);
-        HLineData downPam = getDnPam();
-        err = d->m_pam->getHline(d->m_region.m_oriImg, res, line, dnLine, downPam);
-
-        if (err.isWrong())
-            QMessageBox::warning(this, "warning", err.msg());
-
-        if ((err.code() == NG) || (!err.isWrong())) {
-            GenRegionLine(&hLine, line.y1(), line.x1(), line.y2(), line.x2());
-            d->m_widget->showObj(hLine);
-            d->m_widget->showMsg(QString("Angle:%1").arg(downPam.angle));
-        }
-
+        HObject lineH;
+        GenRegionLine(&lineH, line.startRow, line.startCol, line.endRow, line.endCol);
+        d->m_widget->showObj(lineH);
     }  catch (...) {
         SENDERR("singleDetct crashed!");
     }
@@ -284,28 +192,5 @@ void CSHDetect::CGetTapeAngleWidget::on_btn_doenDetect_clicked()
 
 void CSHDetect::CGetTapeAngleWidget::on_btn_detect_clicked()
 {
-    QList<QLine> gdLine, ngLine;
-    VLineData vPam = getVPam();
-    HLineData upPam = getUpPam();
-    HLineData dnPam = getDnPam();
-
-    d->m_pam->setDownPam(dnPam);
-    d->m_pam->setUpPam(upPam);
-    d->m_pam->setVPam(vPam);
-    CError err = d->m_pam->detect(d->m_region.m_oriImg, d->m_region, gdLine, ngLine);
-    if (err.isWrong())
-        SENDERR(err.msg());
-
-    try {
-        HObject hLines, hLine;
-        GenEmptyObj(&hLines);
-        for (QLine line : gdLine) {
-            GenRegionLine(&hLine, line.y1(), line.x1(), line.y2(), line.x2());
-            Union2(hLines, hLine, &hLines);
-        }
-        d->m_widget->showObj(hLines);
-
-    }  catch (...) {
-        SENDERR("detect crashed!");
-    }
+    detect();
 }

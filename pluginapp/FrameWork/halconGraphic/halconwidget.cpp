@@ -40,8 +40,6 @@ public:
     bool m_bIsMove;
 };
 
-
-
 halconWidget::halconWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::halconWidget),
@@ -86,7 +84,7 @@ bool halconWidget::setShowImage(HalconCpp::HObject obj)
         d->row1 = 0;
         d->col2 = d->imgWid;
         d->row2 = d->imgHit;
-        qDebug() << "image size:" << d->imgWid[0].D() << d->imgHit[0].D();
+
         qDebug() << "image size:" << d->col2[0].D() << d->row2[0].D();
         SetPart(d->windowHandle, d->row1, d->col1, d->row2, d->col2);
         AttachBackgroundToWindow(d->img, d->windowHandle);
@@ -137,7 +135,7 @@ bool halconWidget::objIsEmpty(const HalconCpp::HObject &obj)
 {
     bool ini = obj.IsInitialized();
     if (!ini) {
-        qDebug() << "the input obj is unuseless";
+        //qDebug() << "the input obj is unuseless";
         return true;
     }
 
@@ -148,7 +146,7 @@ bool halconWidget::objIsEmpty(const HalconCpp::HObject &obj)
 
     ini = number == 1 ? true : false;
 
-    qDebug() << "the input obj is bad ?" << ini;
+    //qDebug() << "the input obj is bad ?" << ini;
     return ini;
 }
 
@@ -273,7 +271,7 @@ void halconWidget::showMsg(QList<QString> strList, const QPoint pts)
     int x = pts.x() > 0 ? pts.x() : 0;
     int y = pts.y() > 0 ? pts.y() : 0;
 
-    qDebug() << "font size:"<< d->fontSize;
+    //qDebug() << "font size:"<< d->fontSize;
 
     for(auto str : strList){
         SetTposition(d->windowHandle, y, x);

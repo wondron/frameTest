@@ -296,6 +296,50 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="btn_before">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>上页</string>
+        </property>
+        <property name="shortcut">
+         <string>Left</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_next">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>下页</string>
+        </property>
+        <property name="shortcut">
+         <string>Right</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <property name="topMargin">
          <number>0</number>
@@ -316,6 +360,9 @@
           </property>
           <property name="text">
            <string>检测</string>
+          </property>
+          <property name="shortcut">
+           <string>Return</string>
           </property>
          </widget>
         </item>

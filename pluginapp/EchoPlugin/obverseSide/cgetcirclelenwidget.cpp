@@ -133,6 +133,11 @@ void CGetCircleLenWidget::on_btn_test_clicked()
     if(!d->isSetRegion)
         SENDERR("not set the regions");
 
+    int settingNum = ui->spin_tapeNum->value();
+    int tapeNum = d->m_region.TapeNum;
+    if(settingNum != tapeNum)
+        SENDERR(QString("Tape Num is not match(current:%1, setting: %2)").arg(tapeNum).arg(settingNum));
+
     CError err = d->m_pam->getLineInfo(d->m_region, info);
     if(err.isWrong()) SENDERR(err.msg());
 
@@ -141,11 +146,8 @@ void CGetCircleLenWidget::on_btn_test_clicked()
         HObject line, lines;
         GenEmptyObj(&lines);
         for(auto i : info){
-            qDebug()<< index++;
-            qDebug()<<"i:"<<i.startRow.D()<< i.startCol.D()<< i.endRow.D()<< i.endCol.D();
             GenRegionLine(&line, i.startRow, i.startCol, i.endRow, i.endCol);
             Union2(lines, line, &lines);
-            qDebug()<< index++;
             GenRegionLine(&line, i.pY, i.pX, i.crossY, i.crossX);
             Union2(lines, line, &lines);
         }

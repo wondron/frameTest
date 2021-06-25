@@ -11,6 +11,8 @@ namespace CSHDetect {
 #define RHOBJ HalconCpp::HObject&
 #endif
 
+typedef const int cint ;
+
 /**
  * 私有类，用来保存检测参数。
  */
@@ -45,16 +47,19 @@ public:
      * @param minThre：二值分割的最小阈值
      * @param eroValue：腐蚀量
      */
-    CError getBatteryRegion (CONSTIMG img, RHOBJ batteryRegion, int minThre, int eroValue);
+    CError getBatteryRegion (CONSTIMG img, RHOBJ batteryRegion, cint gridW, cint gridH, cint minThre, cint eroValue, cint slctNum);
 
     /**
-     * @brief getMidRegion: 求中间的极耳区域，包括中间的蓝胶区域。
+     * @brief getMidRegion: 获取中间区域
      * @param img： 检测原图
-     * @param batRegion：电池区域
-     * @param midRegion：求得的中间区域
-     * @param maxThre：中间区域最大的阈值。
+     * @param batRegion： 电池区域
+     * @param midRegion：结果
+     * @param maxThre：区域最大的灰度值
+     * @param dilaWid：确定两个电池区域后根据两点中心画的dila
+     * @param eroVal: 对最终区域进行腐蚀
+     * @return
      */
-    CError getMidRegion(CONSTIMG img, CONSTIMG batRegion, RHOBJ midRegion, int maxThre);
+    CError getMidRegion(CONSTIMG img, CONSTIMG batRegion, RHOBJ midRegion, cint batteryDire, cint maxThre, cint dilaWid, cint eroVal);
 
     /**
      * @brief getBlueTapeNum ：获取胶带贴的数量

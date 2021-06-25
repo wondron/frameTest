@@ -13,13 +13,19 @@ public:
     ~CGetReRegionsPrivate() {}
     //总体
     int tapeNum = 4;
+    int batteryDire = 0;
 
     //获取电池区域
-    int minThre = 240;
-    int eroValue = 120;
+    int batGridW = 50;
+    int batGridH = 50;
+    int batSlctNum = 2;
+    int batMinThre = 240;
+    int batEroValue = 0;
 
     //获取中间区域
-    int maxThre = 240;
+    int midMaxThre = 240;
+    int midDilaWid = 1400;
+    int midEroValue= 10;
 
     //获取胶带的边缘区域
     int higDilation = 500;
@@ -46,21 +52,22 @@ CError CGetReRegions::detect(const HObject& obj, ReverRegionS& res)
         GetImageSize(obj, &width, &heigh);
         res.width = width.D();
         res.height = heigh.D();
+        res.batDire = d->batteryDire;
 
-        err = getBatteryRegion(obj, res.batteryRegion, d->minThre, d->eroValue);
+        err = getBatteryRegion(obj, res.batteryRegion, d->batGridW, d->batGridH, d->batMinThre, d->batEroValue, d->batSlctNum);
         CHECKERR(err);
 
-        err = getMidRegion(obj, res.batteryRegion, res.midRegion, d->maxThre);
+        err = getMidRegion(obj, res.batteryRegion, res.midRegion, d->batteryDire, d->midMaxThre, d->midDilaWid, d->midEroValue);
         CHECKERR(err);
 
-        int num = 0;
-        err = getBlueTapeNum(res.midRegion, res.blueTapesReg, d->higDilation, d->widDilation, num);
-        CHECKERR(err);
-        if (num != d->tapeNum)
-            return CError(NG, QString("tap num is not %1 : %2").arg(d->tapeNum).arg(num));
+//        int num = 0;
+//        err = getBlueTapeNum(res.midRegion, res.blueTapesReg, d->higDilation, d->widDilation, num);
+//        CHECKERR(err);
+//        if (num != d->tapeNum)
+//            return CError(NG, QString("tap num is not %1 : %2").arg(d->tapeNum).arg(num));
 
-        err = getDoubleTapeRoi(res.blueTapesReg, res.dblTapeReg, d->tapeDire, d->erosionSize);
-        CHECKERR(err);
+//        err = getDoubleTapeRoi(res.blueTapesReg, res.dblTapeReg, d->tapeDire, d->erosionSize);
+//        CHECKERR(err);
         return 0;
 
     } catch (...) {
@@ -75,9 +82,9 @@ CError CGetReRegions::pamRead(const char* xmlfilePath)
     try {
         std::map<std::string, xmlInfo> res = xmlRead.parseXML(xmlfilePath, taskName.toLocal8Bit().data());
 
-        READPAM(d->minThre, "minThre", res);
-        READPAM(d->eroValue, "eroValue", res);
-        READPAM(d->maxThre, "maxThre", res);
+        READPAM(d->batMinThre, "batMinThre", res);
+        READPAM(d->batEroValue, "batEroValue", res);
+        READPAM(d->midMaxThre, "midMaxThre", res);
         READPAM(d->higDilation, "higDilation", res);
         READPAM(d->widDilation, "widDilation", res);
         READPAM(d->tapeDire, "tapeDire", res);
@@ -90,29 +97,11 @@ CError CGetReRegions::pamRead(const char* xmlfilePath)
     }
 }
 
-CSHDetect::CError CGetReRegions::getBatteryRegion(const HalconCpp::HObject& img, HalconCpp::HObject& batteryRegion, int minThre, int eroValue)
+CSHDetect::CError CGetReRegions::getBatteryRegion(const HalconCpp::HObject& img, HalconCpp::HObject& batteryRegion, cint gridW, cint gridH, cint batMinThre, cint midEroValue, cint batSlctNum)
 {
     try {
-        HObject  Region, eroRegion, connectReg;
-        HObject  selected, unionReg;
-
-        HTuple  areaTup, rowTup, colTup, sortTuple;
-
-        CHECKEMPIMG(img, "getBatteryRegion::img is empty");
-        CHECKTHREVALUE(minThre, "getBlackBangRoi::maxThre out of range");
-
-        Threshold(img, &Region, minThre, 255);
-        ErosionCircle(Region, &eroRegion, eroValue);
-        Connection(eroRegion, &connectReg);
-        AreaCenter(connectReg, &areaTup, &rowTup, &colTup);
-
-        CHECKEMPTUPLE(areaTup, "getBatteryRegion::areaTup is empty");
-        TupleSort(areaTup, &sortTuple);
-        int lenth = areaTup.TupleLength();
-        SelectShape(connectReg, &selected, "area", "and", sortTuple[lenth - 2],  sortTuple[lenth - 1] + 10);
-        Union1(selected, &unionReg);
-        ShapeTrans(unionReg, &batteryRegion, "convex");
-
+        CError err = Algorithm::useGridGetRegion(img, batteryRegion, gridW, gridH, batMinThre, midEroValue, batSlctNum);
+        if(err.isWrong()) return err;
         return 0;
     }  catch (...) {
         qDebug() << "CGetReRegions::getBatteryRegion crashed!";
@@ -120,23 +109,39 @@ CSHDetect::CError CGetReRegions::getBatteryRegion(const HalconCpp::HObject& img,
     }
 }
 
-CError CGetReRegions::getMidRegion(const HObject& img, const HObject& batRegion, HObject& midRegion, int maxThre)
+CError CGetReRegions::getMidRegion(const HObject& img, const HObject& batRegion, HObject& midRegion, cint batteryDire, cint midMaxThre, cint midDilaWid, cint eroVal)
 {
     try {
-        HObject  imgReduce, Region, fillupReg;
-        HObject  connecReg;
 
-        CHECKEMPIMG(img, "getBatteryRegion::img is empty");
-        CHECKEMPIMG(batRegion, "getMidRegion::batRegion is empty");
-        CHECKTHREVALUE(maxThre, "getBlackBangRoi::maxThre out of range");
+        CHECKEMPIMG(img, "getMidRegion input is empty");
+        CHECKEMPIMG(batRegion, "batRegion input is empty");
+        CHECKTHREVALUE(midMaxThre, "getMidRegion midMaxThre is out of range");
+        CHECKTHREVALUE(eroVal, "getMidRegion eroVal is out of range");
 
-        ReduceDomain(img, batRegion, &imgReduce);
-        Threshold(imgReduce, &Region, 0, maxThre);
-        FillUp(Region, &fillupReg);
-        Connection(fillupReg, &connecReg);
-        CHECKEMPIMG(connecReg, "getBatteryRegion::connecReg is empty");
+        HObject  ConnectedRegions, RegionLines;
+        HObject  RegionDilation, ImageReduced, Region, ConnectedRegions1;
 
-        SelectShapeStd(connecReg, &midRegion, "max_area", 70);
+        HTuple  Area, Row, Column;
+        Connection(batRegion, &ConnectedRegions);
+        AreaCenter(ConnectedRegions, &Area, &Row, &Column);
+        GenRegionLine(&RegionLines, HTuple(Row[0]), HTuple(Column[0]), HTuple(Row[1]), HTuple(Column[1]));
+        int dilaW, dilaH;
+        if(batteryDire == 0){
+            dilaW = midDilaWid;
+            dilaH = 1;
+        }else{
+            dilaW = 1;
+            dilaH = midDilaWid;
+        }
+
+        DilationRectangle1(RegionLines, &RegionDilation, dilaW, dilaH);
+        ReduceDomain(img, RegionDilation, &ImageReduced);
+        Threshold(ImageReduced, &Region, 0, midMaxThre);
+        FillUp(Region, &midRegion);
+
+        ErosionCircle(midRegion, &midRegion, eroVal);
+        Connection(midRegion, &ConnectedRegions1);
+        SelectShapeStd(ConnectedRegions1, &midRegion, "max_area", 70);
         return 0;
 
     }  catch (...) {

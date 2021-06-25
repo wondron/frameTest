@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>881</width>
-    <height>667</height>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,69 +119,42 @@
             <number>5</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <widget class="QComboBox" name="cmbx_quadrant">
              <item>
-              <widget class="QComboBox" name="cmbx_quadrant">
-               <item>
-                <property name="text">
-                 <string>第一象限</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>第二象限</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>第三象限</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>第四象限</string>
-                </property>
-               </item>
-              </widget>
+              <property name="text">
+               <string>第一象限</string>
+              </property>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
-               <property name="maximumSize">
-                <size>
-                 <width>1</width>
-                 <height>1</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
+              <property name="text">
+               <string>第二象限</string>
+              </property>
              </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_singleDetct">
-             <property name="text">
-              <string>单象限检测</string>
-             </property>
+             <item>
+              <property name="text">
+               <string>第三象限</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>第四象限</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_2">
+            <widget class="QGroupBox" name="grpbx_1">
              <property name="title">
-              <string>长边</string>
+              <string/>
              </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
               <property name="spacing">
-               <number>3</number>
+               <number>0</number>
               </property>
               <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
                <number>0</number>
               </property>
               <property name="rightMargin">
@@ -191,149 +164,24 @@
                <number>0</number>
               </property>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>宽膨胀</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_dilaWid">
-                  <property name="maximum">
-                   <number>999</number>
-                  </property>
-                  <property name="value">
-                   <number>30</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_5">
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>长腐蚀</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_eroHigh">
-                  <property name="maximum">
-                   <number>40</number>
-                  </property>
-                  <property name="value">
-                   <number>40</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_25">
-                <item>
-                 <widget class="QLabel" name="label_23">
-                  <property name="text">
-                   <string>阈值</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_threSubValue">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>245</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <widget class="QLabel" name="label_5">
-                  <property name="text">
-                   <string>长度筛选</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_minConLen">
-                  <property name="maximum">
-                   <number>999</number>
-                  </property>
-                  <property name="value">
-                   <number>300</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_26">
-                <item>
-                 <widget class="QLabel" name="label_24">
-                  <property name="text">
-                   <string>角度</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_angDown">
-                  <property name="minimum">
-                   <double>-3.100000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>3.100000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>1.000000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_angleUp">
-                  <property name="minimum">
-                   <double>-3.140000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>3.140000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>3.000000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <layout class="QVBoxLayout" name="lay_1"/>
               </item>
              </layout>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_vDetect">
-             <property name="text">
-              <string>长边检测</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_5">
+            <widget class="QGroupBox" name="grpbx_2">
              <property name="title">
-              <string>上边</string>
+              <string/>
              </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
               <property name="spacing">
-               <number>3</number>
+               <number>0</number>
               </property>
               <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
                <number>0</number>
               </property>
               <property name="rightMargin">
@@ -343,152 +191,24 @@
                <number>0</number>
               </property>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_15">
-                <item>
-                 <widget class="QLabel" name="label_13">
-                  <property name="text">
-                   <string>宽伸展</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_tXexpan">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>30</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_16">
-                <item>
-                 <widget class="QLabel" name="label_14">
-                  <property name="text">
-                   <string>长伸展</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_tYexpan">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>30</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_17">
-                <item>
-                 <widget class="QLabel" name="label_15">
-                  <property name="text">
-                   <string>阈值</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_tSubThreVal">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>245</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_18">
-                <item>
-                 <widget class="QLabel" name="label_16">
-                  <property name="text">
-                   <string>长度比例</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_tSelectRatio">
-                  <property name="maximum">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>0.010000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>0.500000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_19">
-                <item>
-                 <widget class="QLabel" name="label_17">
-                  <property name="text">
-                   <string>角度</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_tAngleDown">
-                  <property name="minimum">
-                   <double>-3.100000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>3.100000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>-0.200000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_tAngleUp">
-                  <property name="minimum">
-                   <double>-3.140000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>3.140000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>0.200000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <layout class="QVBoxLayout" name="lay_2"/>
               </item>
              </layout>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_upDetect">
-             <property name="text">
-              <string>上边检测</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_6">
+            <widget class="QGroupBox" name="grpbx_3">
              <property name="title">
-              <string>下边</string>
+              <string/>
              </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
               <property name="spacing">
-               <number>3</number>
+               <number>0</number>
               </property>
               <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
                <number>0</number>
               </property>
               <property name="rightMargin">
@@ -498,144 +218,36 @@
                <number>0</number>
               </property>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_20">
-                <item>
-                 <widget class="QLabel" name="label_18">
-                  <property name="text">
-                   <string>宽伸展</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_bXexpan">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>30</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_21">
-                <item>
-                 <widget class="QLabel" name="label_19">
-                  <property name="text">
-                   <string>长伸展</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_bYexpan">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>30</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_22">
-                <item>
-                 <widget class="QLabel" name="label_20">
-                  <property name="text">
-                   <string>阈值</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spin_bSubThreVal">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>245</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_23">
-                <item>
-                 <widget class="QLabel" name="label_21">
-                  <property name="text">
-                   <string>长度比例</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_bSelectRatio">
-                  <property name="maximum">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>0.010000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>0.500000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_24">
-                <item>
-                 <widget class="QLabel" name="label_22">
-                  <property name="text">
-                   <string>角度</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_bAngleDown">
-                  <property name="minimum">
-                   <double>-3.100000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>3.100000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>-0.200000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspin_bAngleUp">
-                  <property name="minimum">
-                   <double>-3.140000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>3.140000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>0.200000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btn_doenDetect">
-                <property name="text">
-                 <string>下边检测</string>
-                </property>
-               </widget>
+               <layout class="QVBoxLayout" name="lay_3"/>
               </item>
              </layout>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_read">
-             <property name="text">
-              <string>参数读取</string>
+            <widget class="QGroupBox" name="grpbx_4">
+             <property name="title">
+              <string/>
              </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <layout class="QVBoxLayout" name="lay_4"/>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
@@ -650,6 +262,20 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_singleDetct">
+             <property name="text">
+              <string>单象限检测</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_pamRead">
+             <property name="text">
+              <string>参数读取</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="btn_detect">
@@ -669,22 +295,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>cmbx_quadrant</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>pushButton</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>807</x>
-     <y>34</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>859</x>
-     <y>33</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

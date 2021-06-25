@@ -28,6 +28,7 @@ if(Algorithm::tupleisEmpty(tup).isWrong())\
     auto iterMBA = res.find(name);\
     if (iterMBA != res.end()) {   \
         target = iterMBA->second.value;\
+        qDebug() << "value:" << target;\
     }\
 }
 
@@ -40,6 +41,8 @@ enum errIndex {
     EMPTYOBJ,
     REGIONNUM,  //蓝胶数量过少
     PAMREAD,
+    ANGLE,      //蓝胶角度不良
+    HANSIZE,    //焊印数量错误
     UNEXCEPTION = 99
 };
 
@@ -61,6 +64,22 @@ enum Quadrant {
     SECOND,
     THIRD,
     FOURTH
+};
+
+//MeaSurePos参数枚举
+enum  PntSelect
+{
+    ALL = 0,
+    FIRSTPNT,
+    LASTPNT
+};
+
+//MeaSurePos参数枚举
+enum  Transition
+{
+    ALLTRANS = 0,
+    POSITIVE,
+    NAGETIVE
 };
 
 //显示图像类型枚举

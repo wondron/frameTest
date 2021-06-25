@@ -84,50 +84,79 @@
        <number>10</number>
       </property>
       <property name="leftMargin">
-       <number>3</number>
+       <number>1</number>
       </property>
       <property name="topMargin">
        <number>9</number>
       </property>
       <property name="rightMargin">
-       <number>3</number>
+       <number>1</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="topMargin">
-         <number>0</number>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="title">
+         <string>连接片方向</string>
         </property>
-        <property name="bottomMargin">
-         <number>0</number>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="leftMargin">
+          <number>3</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QComboBox" name="cmb_direction">
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>上下</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>左右</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>胶带区域数量</string>
         </property>
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>方向</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="cmb_direction">
-          <property name="currentIndex">
-           <number>1</number>
-          </property>
-          <item>
-           <property name="text">
-            <string>上下</string>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="leftMargin">
+          <number>3</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QSpinBox" name="spin_tapeNum">
+           <property name="maximum">
+            <number>9</number>
            </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>左右</string>
+           <property name="value">
+            <number>4</number>
            </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
        <widget class="QGroupBox" name="groupBox">

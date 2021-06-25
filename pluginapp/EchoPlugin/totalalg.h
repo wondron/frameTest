@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "totaltestwidget.h"
 #include "totaltestwidgetr.h"
+#include "test.h"
 
 namespace Ui {
 class totalAlg;
@@ -20,7 +21,7 @@ public:
 private:
     totalTestWidget* obverWidget;
     totalTestWidgetR* reverWidget;
-
+    test* testWidget;
     Ui::totalAlg *ui;
 };
 

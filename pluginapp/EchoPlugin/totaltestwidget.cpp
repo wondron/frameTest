@@ -91,7 +91,10 @@ void totalTestWidget::getFilename(const QString &file)
 void totalTestWidget::OnPamSetDetectDone()
 {
     d->regions = d->m_regionsWidget->getRegons();
+
     d->m_circleLenWidget->setRegions(d->regions);
+
+    d->m_cuWidget->setRegions(d->regions);
 }
 
 int totalTestWidget::getImage(const QString &file)
@@ -124,7 +127,6 @@ void totalTestWidget::on_btn_loadPam_clicked()
     CError err;
     err = d->m_pam->PamRead("D:\\work\\detect\\detection\\bin\\conf\\algorithm\\cshdefault\\detection.xml");
     setPam(d->m_pam);
-    qDebug()<<"err:"<<err.msg();
 }
 
 void totalTestWidget::on_btn_detect_clicked()

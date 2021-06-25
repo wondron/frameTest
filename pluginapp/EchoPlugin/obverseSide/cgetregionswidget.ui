@@ -922,51 +922,105 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_22">
+          <layout class="QHBoxLayout" name="horizontalLayout_32">
            <property name="topMargin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label_15">
+            <widget class="QLabel" name="label_19">
              <property name="text">
-              <string>孔洞大小</string>
+              <string>高斯Sigma</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spin_tapeholeSize">
-             <property name="maximum">
-              <number>9999</number>
+            <widget class="QDoubleSpinBox" name="dspin_guassSigma">
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
              </property>
              <property name="value">
-              <number>10</number>
+              <double>2.300000000000000</double>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_18">
+          <layout class="QHBoxLayout" name="horizontalLayout_33">
            <property name="topMargin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label_6">
+            <widget class="QLabel" name="label_21">
              <property name="text">
-              <string>筛选范围</string>
+              <string>高斯factor</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="dspin_slctRange">
-             <property name="maximum">
-              <double>2.000000000000000</double>
+            <widget class="QDoubleSpinBox" name="dspin_guassFactor">
+             <property name="decimals">
+              <number>1</number>
              </property>
              <property name="singleStep">
-              <double>0.010000000000000</double>
+              <double>0.100000000000000</double>
              </property>
              <property name="value">
-              <double>0.150000000000000</double>
+              <double>1.600000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_35">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>阈值</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spin_threMax">
+             <property name="minimum">
+              <number>-255</number>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>-3</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_34">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_22">
+             <property name="text">
+              <string>胶带孔大小</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spin_holeSize">
+             <property name="maximum">
+              <number>999999</number>
+             </property>
+             <property name="value">
+              <number>10</number>
              </property>
             </widget>
            </item>
@@ -1021,7 +1075,7 @@
               <number>999999</number>
              </property>
              <property name="value">
-              <number>3100</number>
+              <number>255</number>
              </property>
             </widget>
            </item>
@@ -1378,8 +1432,8 @@
      <y>504</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1029</x>
-     <y>533</y>
+     <x>1143</x>
+     <y>530</y>
     </hint>
    </hints>
   </connection>
@@ -1390,44 +1444,12 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1070</x>
-     <y>572</y>
+     <x>1142</x>
+     <y>571</y>
     </hint>
     <hint type="destinationlabel">
      <x>1017</x>
      <y>595</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spin_tapeholeSize</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>btn_Tape</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1082</x>
-     <y>682</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>972</x>
-     <y>721</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dspin_slctRange</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>btn_Tape</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1077</x>
-     <y>701</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1011</x>
-     <y>735</y>
     </hint>
    </hints>
   </connection>
@@ -1438,12 +1460,12 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1065</x>
-     <y>772</y>
+     <x>1142</x>
+     <y>803</y>
     </hint>
     <hint type="destinationlabel">
-     <x>970</x>
-     <y>811</y>
+     <x>1143</x>
+     <y>849</y>
     </hint>
    </hints>
   </connection>
@@ -1454,12 +1476,76 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1071</x>
-     <y>785</y>
+     <x>1142</x>
+     <y>825</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1015</x>
-     <y>818</y>
+     <x>1143</x>
+     <y>849</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dspin_guassSigma</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>btn_Tape</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1103</x>
+     <y>669</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>984</x>
+     <y>748</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dspin_guassFactor</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>btn_Tape</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1066</x>
+     <y>691</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>999</x>
+     <y>745</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_threMax</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_Tape</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1064</x>
+     <y>711</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1007</x>
+     <y>749</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_holeSize</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>btn_Tape</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1065</x>
+     <y>735</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1023</x>
+     <y>760</y>
     </hint>
    </hints>
   </connection>

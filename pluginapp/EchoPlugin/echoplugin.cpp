@@ -19,10 +19,11 @@ void EchoPlugin::echo(QObject *parent)
 {
 //    Graphics::halconWidget* widget = new Graphics::halconWidget;
 
-//    qDebug()<<"enter echo plugin";
+    qDebug()<<"enter echo plugin";
+    totalAlg *widget = new totalAlg();
 //    //Graphics::WGraphicsWidget *widget = new Graphics::WGraphicsWidget();
 //    widget->setMinimumSize(600,600);
-//    widget->show();
+    widget->show();
 }
 
 #if(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))

@@ -1,9 +1,22 @@
-#pragma once
+﻿#pragma once
 #include "../commonUsage/cerror.h"
 #include "halconcpp/HalconCpp.h"
+#include "../commonUsage/commonDef.h"
 
 namespace CSHDetect{
 
+#ifndef CONSTIMG
+#define CONSTIMG const HalconCpp::HObject&
+#endif
+
+#ifndef RHOBJ
+#define RHOBJ HalconCpp::HObject&
+#endif
+
+class CGetCuStrapPosPrivate;
+/**
+ * @brief The CGetCuStrapPos class:检测铜片位置
+ */
 class CGetCuStrapPos
 {
 public:
@@ -11,15 +24,13 @@ public:
 
     explicit CGetCuStrapPos(const QString taskName);
 
+    explicit CGetCuStrapPos(const RegionS& region);
+
     void setImgSize(const int width, const int height);
 
-    CError testPos(int& position, const HalconCpp::HObject& desImg, HalconCpp::HObject& resObj,
-                  const int widHeight, const int maxThre = 220, const int direction = 1);
+    void setRegions(const RegionS& regions);
 
-    CError testPos(int& position, const HalconCpp::HObject& desImg, HalconCpp::HObject& resObj,
-                  const int maxThre = 220, const int direction = 1);
-
-    CError detect(const HalconCpp::HObject& desImg);
+    CError detect(const RegionS& regions, QVector<QRect>& gdRect, QVector<QRect>& ngRect);
 
     CError pamRead(const char *xmlfilePath);
 
@@ -28,12 +39,17 @@ public:
     const QString getTaskName() const {return taskName;}
 
 public:
-    int m_width;
-    int m_height;
 
-    int maxThre = 220;
-    int CuPos = 3;
-    int strapDirection = 1;
+    CError getMidRect(const RegionS& regions, RHOBJ midRegion, const int connectDirect);
+
+    CError getCuPos(const RegionS& regions, CONSTIMG midRegion, RHOBJ resCuRegion, int& CuPos, cint minThre, cint connectDirect);
+
+    CError checkTapeNum(const RegionS& region, CONSTIMG cuRegion, QVector<RectInfo> testInfo,
+                        QVector<QRect> &gdInfo, QVector<QRect> &ngInfo,
+                        cint minThre, cint maxThre, const qreal areaRatoi, const QSize size);
+
+public:
+    CGetCuStrapPosPrivate* d;
     QString taskName = "GetCuStrapPos";
 };
 }

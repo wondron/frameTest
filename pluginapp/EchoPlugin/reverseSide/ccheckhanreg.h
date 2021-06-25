@@ -27,7 +27,7 @@ public:
     /**
      * @brief detect: 程序外部使用接口，获取各部分的参数。
      */
-    CError detect(CONSTIMG obj, const ReverRegionS& res, QList<QRect>& rects);
+    CError detect(CONSTIMG obj, ReverRegionS &res, QList<QRect>& rects);
 
     /**
      * @brief pamRead: 读取检测参数

@@ -1,6 +1,7 @@
 ﻿#include "cimageviewhalcon.h"
 #include "ui_cimageviewhalcon.h"
 #include "citemlistwidget.h"
+#include "halconGraphic/halconwidget.h"
 
 namespace Graphics {
 
@@ -38,6 +39,11 @@ void CImageViewHalcon::setFilePath(const QString &filePath)
 QWidget *CImageViewHalcon::imageWindow()
 {
     return d->widget;
+}
+
+HalconCpp::HObject CImageViewHalcon::currentImage()
+{
+    return d->widget->getShowImage();
 }
 
 }

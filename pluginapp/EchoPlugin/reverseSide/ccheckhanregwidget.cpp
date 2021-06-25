@@ -8,7 +8,7 @@
 
 #define SENDERR(a) \
     {QMessageBox::warning(this, "warnning", a);\
-    return;}
+    return 1;}
 
 namespace CSHDetect {
 
@@ -46,15 +46,23 @@ CCheckHanRegWidget::~CCheckHanRegWidget()
     delete ui;
 }
 
-void CCheckHanRegWidget::setRegions(const ReverRegionS& region)
+CError CCheckHanRegWidget::setRegions(const ReverRegionS& region)
 {
-    CError err = Algorithm::objIsEmpty(region.dblTapeReg);
+    CError err = Algorithm::objIsEmpty(region.midRegion);
+
     if (err.isWrong())
-        SENDERR("input regiono is empty");
+        SENDERR("CCheckHanRegWidget::setRegions input region is empty");
 
     d->m_region = region;
     d->isSetRegion = true;
     d->m_widget->setShowImage(region.m_oriImg);
+
+    return 0;
+}
+
+ReverRegionS &CCheckHanRegWidget::getRegions()
+{
+    return d->m_region;
 }
 
 void CCheckHanRegWidget::setPam(CCheckHanReg* pam)
@@ -62,7 +70,7 @@ void CCheckHanRegWidget::setPam(CCheckHanReg* pam)
     d->m_pam = pam;
 }
 
-void CCheckHanRegWidget::on_btn_detect_clicked()
+CError CCheckHanRegWidget::detect()
 {
     if (!d->isSetRegion)
         SENDERR("not set regions");
@@ -75,28 +83,23 @@ void CCheckHanRegWidget::on_btn_detect_clicked()
     int hanSize = ui->spin_hanSize->value();
     int maxArea = ui->spin_maxArea->value();
 
-    CError err = d->m_pam->getHanRegion(d->m_region.m_oriImg, d->m_region.dblTapeReg, hanReg,
+    CError err = d->m_pam->getHanRegion(d->m_region.m_oriImg, d->m_region.midRegion, d->m_region.hanregion,
                                         hanHolSize, dynThr, dynKer, maxArea, hanSize, rects);
     if (err.isWrong())
         SENDERR(err.msg());
 
-    try {
-        HObject hRect, unions;
-        GenEmptyObj(&unions);
-        for(auto rect : rects){
-            GenRectangle1(&hRect, rect.top(), rect.left(), rect.bottom(), rect.right());
-            Union2(unions, hRect, &unions);
-        }
+    emit detectDone();
+    d->m_widget->showObj(d->m_region.hanregion);
 
-        Union2(unions, hanReg, &hanReg);
-        d->m_widget->showObj(d->m_region.m_oriImg, hanReg);
-
-    }  catch (...) {
-        qDebug() << "show rect crashed";
-    }
+    return 0;
 }
 
-void CCheckHanRegWidget::checkDyn()
+void CCheckHanRegWidget::on_btn_detect_clicked()
+{
+    detect();
+}
+
+CError CCheckHanRegWidget::checkDyn()
 {
     try {
         HObject dst, doubleTapeRoi, ImageReduced, RegionDynThresh;
@@ -120,6 +123,8 @@ void CCheckHanRegWidget::checkDyn()
 
         d->m_widget->showObj(RegionDynThresh);
         d->dynImg = RegionDynThresh;
+
+        return 0;
 
     }  catch (...) {
         SENDERR(" application crashed! ");

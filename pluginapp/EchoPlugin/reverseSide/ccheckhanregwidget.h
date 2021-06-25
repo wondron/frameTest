@@ -20,14 +20,20 @@ public:
     explicit CCheckHanRegWidget(QWidget* parent = nullptr);
     ~CCheckHanRegWidget();
 
-    void setRegions(const ReverRegionS& region);
+    CError setRegions(const ReverRegionS& region);
+
+    ReverRegionS& getRegions();
 
     void setPam(CCheckHanReg* pam);
 
+    CError detect();
+
+signals:
+    void detectDone();
+
 private slots:
     void on_btn_detect_clicked();
-
-    void checkDyn();
+    CError checkDyn();
 
 private:
 
