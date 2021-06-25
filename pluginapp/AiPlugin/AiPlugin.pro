@@ -14,12 +14,15 @@ HEADERS += \
     WAiConstant.h \
     aidatapro.h \
     aiplugin.h \
-    aiwidget.h
+    aiwidget.h \
+    cgetimagewidget.h
 
 SOURCES += \
     aidatapro.cpp \
     aiplugin.cpp \
-    aiwidget.cpp
+    aiwidget.cpp \
+    cgetimagewidget.cpp
 
 FORMS += \
-    aiwidget.ui
+    aiwidget.ui \
+    cgetimagewidget.ui
